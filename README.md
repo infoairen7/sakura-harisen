@@ -2,6 +2,10 @@
 
 仕事を押し付けてくる部長を、バニー衣装のサクラが巨大な紙ハリセンで屋上からぶっ飛ばす。助走の終わりに一度だけタップして、最初の着地点までの飛距離を競う、2D横視点のブラウザゲームです。全5ワールド・10コース。
 
+| タイトル | 振りかぶり | 打撃（PERFECT） | 飛行 |
+|---|---|---|---|
+| <img src="docs/screenshots/title.jpg" width="180" alt="タイトル画面"> | <img src="docs/screenshots/swing.jpg" width="220" alt="振りかぶるサクラ"> | <img src="docs/screenshots/hit.jpg" width="220" alt="ハリセンが当たった瞬間"> | <img src="docs/screenshots/flight.jpg" width="220" alt="飛んでいく部長"> |
+
 ## ブラウザで遊ぶ
 
 **https://infoairen7.github.io/sakura-harisen/**
