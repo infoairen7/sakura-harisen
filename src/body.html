@@ -1,0 +1,244 @@
+<div id="app">
+
+  <div id="boot"><div><p class="small">読み込み中…</p></div></div>
+
+  <!-- タイトル -->
+  <section id="scr-title" class="screen" hidden>
+    <div class="title-inner wrap">
+      <div class="logo">
+        <span class="kicker">サクラの定時退社！</span>
+        <h1>ぶっとび<br>ハリセン</h1>
+        <div class="sub">テストプレイ版 ・ 全10コース</div>
+      </div>
+      <canvas id="title-canvas" aria-hidden="true"></canvas>
+      <div class="title-stats" id="title-stats"></div>
+      <div class="title-menu">
+        <button class="btn primary xl" id="btn-start">はじめる</button>
+        <div class="row">
+          <button class="btn" id="btn-go-courses">コース選択</button>
+          <button class="btn" id="btn-go-equip">装備・強化</button>
+        </div>
+        <div class="row">
+          <button class="btn" id="btn-go-reward">全クリア特典</button>
+          <button class="btn" id="btn-go-settings">設定</button>
+        </div>
+      </div>
+      <div class="title-foot">
+        <span class="small" id="cloud-badge"></span>
+        <button class="linkish" id="btn-go-dev">素材チェック・テスト用ツール</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- オープニング -->
+  <section id="scr-opening" class="screen" hidden>
+    <canvas id="op-canvas"></canvas>
+    <div class="op-bar">
+      <div class="op-dots" id="op-dots"><i></i><i></i><i></i><i></i></div>
+      <div class="row" style="flex:0 0 auto">
+        <button class="btn ghost" id="op-skip">スキップ</button>
+        <button class="btn primary" id="op-next">つぎへ</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- コース選択 -->
+  <section id="scr-courses" class="screen" hidden>
+    <div class="topbar">
+      <button class="btn icon ghost" data-back="title" aria-label="タイトルへ戻る">←</button>
+      <h2>コース選択</h2>
+      <span class="chip">PLAYER <b id="cs-plv">Lv.1</b></span>
+      <span class="chip coin"><b id="cs-coins">0</b>c</span>
+    </div>
+    <div class="scroll"><div class="wrap" id="course-list" style="padding-bottom:24px"></div></div>
+  </section>
+
+  <!-- 装備・強化 -->
+  <section id="scr-equip" class="screen" hidden>
+    <div class="topbar">
+      <button class="btn icon ghost" id="eq-back" aria-label="戻る">←</button>
+      <h2>装備・強化</h2>
+      <span class="chip coin"><b id="eq-coins">0</b>c</span>
+    </div>
+    <div class="scroll"><div class="wrap" style="padding-bottom:24px">
+      <div class="eq-head">
+        <span class="chip">PLAYER <b id="eq-plv">Lv.1</b></span>
+        <span class="chip">強化上限 <b id="eq-cap">Lv.2</b></span>
+        <div class="xpbar" title="次のレベルまで"><i id="eq-xpbar"></i></div>
+        <span class="small num" id="eq-xptext"></span>
+      </div>
+      <div class="eq-sec" id="eq-fan"></div>
+      <div class="eq-sec" id="eq-costume"></div>
+      <p class="small">強化費用は「30＋10×(現在Lv−1)」コイン。PLAYERレベルが上がると強化上限が Lv.2 → 4 → 6 → 8 → 10 と開放されます。</p>
+    </div></div>
+  </section>
+
+  <!-- プレイ -->
+  <section id="scr-play" class="screen" hidden>
+    <div class="topbar">
+      <div style="flex:1;min-width:0">
+        <div class="small num" id="pl-no" style="color:var(--sky);line-height:1.2">WORLD 1/5 · COURSE 1/10</div>
+        <h2 id="pl-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">残業フロア</h2>
+      </div>
+      <span class="chip">PLAYER <b id="pl-lv">Lv.1</b></span>
+      <button class="btn icon" id="btn-pause" aria-label="一時停止">Ⅱ</button>
+    </div>
+    <div id="stage"><canvas id="game"></canvas></div>
+    <div id="hud">
+      <div class="hud-dist">
+        <div class="big" id="hud-dist">0.0<small>m</small></div>
+        <div class="side">目標 <b id="hud-target">130</b> m<br>ベスト <b id="hud-best">—</b></div>
+      </div>
+      <div id="progress"><i id="prog-fill"></i><span class="flag" id="prog-flag"></span><span class="best" id="prog-best" hidden></span></div>
+      <div class="hud-tags" id="hud-tags"></div>
+      <p id="hud-hint" class="small" style="margin:0;min-height:1.6em"></p>
+      <canvas id="timing" aria-hidden="true"></canvas>
+      <button class="action" id="btn-action">走り出す</button>
+    </div>
+  </section>
+
+  <!-- 全クリア特典 -->
+  <section id="scr-reward" class="screen" hidden>
+    <div class="topbar">
+      <button class="btn icon ghost" data-back="title" aria-label="タイトルへ戻る">←</button>
+      <h2>全クリア特典</h2>
+    </div>
+    <div class="scroll"><div class="wrap" style="padding-bottom:24px">
+      <div class="reward-card">
+        <canvas id="reward-canvas" aria-label="特典ブロマイドのシルエット"></canvas>
+        <div style="font:400 1.2rem var(--f-display)" id="reward-title">サクラのブロマイド</div>
+        <div class="clear-dots" id="reward-dots"></div>
+        <div class="small" id="reward-cond">全10コースをクリアすると解放されます。</div>
+      </div>
+      <div class="notice" id="reward-notice"></div>
+    </div></div>
+  </section>
+
+  <!-- 設定 -->
+  <section id="scr-settings" class="screen" hidden>
+    <div class="topbar">
+      <button class="btn icon ghost" data-back="title" aria-label="タイトルへ戻る">←</button>
+      <h2>設定</h2>
+    </div>
+    <div class="scroll"><div class="wrap" style="display:grid;gap:10px;padding-block:14px 24px">
+      <label class="toggle" for="set-sound"><span>効果音</span><input type="checkbox" id="set-sound"></label>
+      <label class="toggle" for="set-motion"><span>揺れ・演出を減らす</span><input type="checkbox" id="set-motion"></label>
+      <button class="btn" id="btn-replay-op">オープニングをもう一度見る</button>
+      <button class="btn ghost" id="btn-reset">セーブデータを初期化</button>
+      <p class="small" id="save-info"></p>
+    </div></div>
+  </section>
+
+  <!-- 開発用 -->
+  <section id="scr-dev" class="screen" hidden>
+    <div class="topbar">
+      <button class="btn icon ghost" data-back="title" aria-label="タイトルへ戻る">←</button>
+      <h2>素材チェック（開発用）</h2>
+    </div>
+    <div class="scroll"><div class="wrap" style="padding-bottom:24px">
+      <div class="dev-asset">
+        <b>テスト用ツール</b>
+        <p class="small" style="margin:0">テストプレイを早く進めるための機能です。本公開版では外します。</p>
+        <div class="row">
+          <button class="btn" id="dev-coins">コイン +1000</button>
+          <button class="btn" id="dev-xp">XP +250</button>
+        </div>
+        <div class="row">
+          <button class="btn" id="dev-clear-all">全コースをクリア済みにする</button>
+          <button class="btn ghost" id="dev-reset">セーブ初期化</button>
+        </div>
+      </div>
+      <div class="dev-asset">
+        <b>推奨装備・PERFECT時の飛距離（設定JSONから計算）</b>
+        <div class="tbl"><table class="dev" id="dev-balance"></table></div>
+      </div>
+      <div id="dev-assets"></div>
+    </div></div>
+  </section>
+
+  <!-- 装備確認シート -->
+  <div id="ov-sheet" class="overlay" hidden>
+    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sh-title">
+      <div class="small num" id="sh-no" style="color:var(--sky)"></div>
+      <h3 id="sh-title"></h3>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) 70px;gap:10px;align-items:center">
+        <dl class="kv" id="sh-kv"></dl>
+        <canvas id="sh-boss" style="width:70px;height:106px" aria-label="このコースの部長"></canvas>
+      </div>
+      <div class="sheet-equip" id="sh-equip"></div>
+      <label class="toggle" for="sh-practice"><span>練習モード<br><span class="small">判定の幅が1.5倍。記録・クリア・報酬は付きません</span></span><input type="checkbox" id="sh-practice"></label>
+      <div class="row">
+        <button class="btn" id="sh-equip-btn">強化する</button>
+        <button class="btn ghost" id="sh-close">やめる</button>
+      </div>
+      <button class="btn primary xl" id="sh-go">屋上へ行く</button>
+    </div>
+  </div>
+
+  <!-- 一時停止 -->
+  <div id="ov-pause" class="overlay" hidden>
+    <div class="pause-card">
+      <h3>一時停止中</h3>
+      <button class="btn primary xl" id="ps-resume">再開する</button>
+      <label class="toggle" for="ps-sound"><span>効果音</span><input type="checkbox" id="ps-sound"></label>
+      <label class="toggle" for="ps-motion"><span>揺れ・演出を減らす</span><input type="checkbox" id="ps-motion"></label>
+      <button class="btn ghost" id="ps-quit">コース選択へ戻る（この挑戦は無効）</button>
+    </div>
+  </div>
+  <div id="countdown" hidden></div>
+
+  <!-- 結果 -->
+  <div id="ov-result" class="overlay" hidden>
+    <div class="result">
+      <div class="scroll">
+        <div class="res-top">
+          <span class="chip num" id="res-course"></span>
+          <span class="res-judge" id="res-judge"></span>
+        </div>
+        <div class="res-dist"><span id="res-dist">0.0</span><small>m</small></div>
+        <div class="res-headline" id="res-headline"></div>
+        <div class="res-hero">
+          <canvas id="res-sakura" aria-hidden="true"></canvas>
+          <div class="bubble" id="res-line">今日は定時！</div>
+        </div>
+        <div class="stress">
+          <div class="lbl"><span>ストレス</span><span><b id="res-stress">100</b> / 100</span></div>
+          <div class="bar"><i id="res-stress-bar"></i></div>
+        </div>
+        <ul class="rewards" id="res-rewards"></ul>
+        <div class="share">
+          <h4>結果画像</h4>
+          <img id="res-img" alt="今回の結果画像（1200×630）">
+          <div class="row">
+            <button class="btn sky" id="btn-share-img" hidden>画像を共有</button>
+            <button class="btn" id="btn-save-img">画像を保存</button>
+            <a class="btn" id="btn-x" target="_blank" rel="noopener">Xで投稿文を開く</a>
+          </div>
+          <p class="note">Xの投稿画面には画像を自動で添付できません。保存した画像を投稿画面で添付してください。画像は長押しでも保存できます。</p>
+        </div>
+      </div>
+      <div class="res-actions">
+        <button class="btn primary xl" id="btn-retry">もう一回</button>
+        <div class="row">
+          <button class="btn" id="btn-res-equip">強化する</button>
+          <button class="btn sky" id="btn-next">次のコースへ</button>
+        </div>
+        <button class="btn ghost" id="btn-res-courses">コース選択</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 確認ダイアログ -->
+  <div id="ov-modal" class="overlay" hidden>
+    <div class="sheet" role="alertdialog" aria-modal="true" aria-labelledby="md-title">
+      <h3 id="md-title"></h3>
+      <p id="md-text" style="margin:0;color:var(--dim)"></p>
+      <div class="row">
+        <button class="btn ghost" id="md-cancel">やめる</button>
+        <button class="btn primary" id="md-ok">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" aria-live="polite"></div>
+</div>

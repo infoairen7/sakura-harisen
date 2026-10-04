@@ -1,0 +1,770 @@
+{
+  "schemaVersion": 1,
+  "generator": "built-in image_gen",
+  "sourceImageCount": 11,
+  "illustratedAtlasFrameCount": 46,
+  "artStyle": "high-resolution pixel-art-inspired raster illustration; reward is photorealistic",
+  "assets": [
+    {
+      "id": "sakura_poses",
+      "title": "サクラ・基本8ポーズ",
+      "path": "assets/characters/sakura_poses.png",
+      "kind": "atlas",
+      "size": [
+        1536,
+        1024
+      ],
+      "alpha": true,
+      "frameCount": 8,
+      "frames": [
+        {
+          "name": "idle",
+          "rect": {
+            "x": 83,
+            "y": 7,
+            "w": 191,
+            "h": 493
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "run_a",
+          "rect": {
+            "x": 399,
+            "y": 6,
+            "w": 333,
+            "h": 489
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "run_b",
+          "rect": {
+            "x": 794,
+            "y": 15,
+            "w": 340,
+            "h": 480
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "windup",
+          "rect": {
+            "x": 1239,
+            "y": 11,
+            "w": 262,
+            "h": 489
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "swing",
+          "rect": {
+            "x": 35,
+            "y": 527,
+            "w": 312,
+            "h": 469
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "followthrough",
+          "rect": {
+            "x": 440,
+            "y": 510,
+            "w": 312,
+            "h": 488
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "victory",
+          "rect": {
+            "x": 861,
+            "y": 492,
+            "w": 235,
+            "h": 509
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "fistpump",
+          "rect": {
+            "x": 1269,
+            "y": 509,
+            "w": 171,
+            "h": 492
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        }
+      ],
+      "notes": "矩形はアルファ主成分を基準に採寸。足元原点と手の接続点はゲーム表示に合わせて最終調整。衣装シートの上下段の境界付近は微小な隣接画素を確認する。",
+      "sha256": "92c56e988f99bc3a9de26e6028abf2787c8e89a3457b527e6cae03d15d9a0be8"
+    },
+    {
+      "id": "boss_poses",
+      "title": "上司・基本8ポーズ",
+      "path": "assets/characters/boss_poses.png",
+      "kind": "atlas",
+      "size": [
+        1536,
+        1024
+      ],
+      "alpha": true,
+      "frameCount": 8,
+      "frames": [
+        {
+          "name": "idle",
+          "rect": {
+            "x": 46,
+            "y": 73,
+            "w": 234,
+            "h": 393
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "brace",
+          "rect": {
+            "x": 412,
+            "y": 121,
+            "w": 282,
+            "h": 336
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "launch",
+          "rect": {
+            "x": 745,
+            "y": 95,
+            "w": 364,
+            "h": 358
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "fly",
+          "rect": {
+            "x": 1153,
+            "y": 111,
+            "w": 367,
+            "h": 292
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "tumble",
+          "rect": {
+            "x": 18,
+            "y": 618,
+            "w": 392,
+            "h": 280
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "land",
+          "rect": {
+            "x": 424,
+            "y": 589,
+            "w": 381,
+            "h": 352
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "thumbsup",
+          "rect": {
+            "x": 814,
+            "y": 534,
+            "w": 295,
+            "h": 417
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "celebrate",
+          "rect": {
+            "x": 1183,
+            "y": 539,
+            "w": 324,
+            "h": 408
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        }
+      ],
+      "notes": "矩形はアルファ主成分を基準に採寸。足元原点と手の接続点はゲーム表示に合わせて最終調整。衣装シートの上下段の境界付近は微小な隣接画素を確認する。",
+      "sha256": "1896eb7b24bbefd766c6d303b5e6f959bf2a3c1ed6519fda4cf9c1d9df891780"
+    },
+    {
+      "id": "harisen",
+      "title": "ハリセン・10段階",
+      "path": "assets/equipment/harisen_lv01-10.png",
+      "kind": "atlas",
+      "size": [
+        1536,
+        1024
+      ],
+      "alpha": true,
+      "frameCount": 10,
+      "frames": [
+        {
+          "name": "lv01",
+          "rect": {
+            "x": 43,
+            "y": 26,
+            "w": 220,
+            "h": 454
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "lv02",
+          "rect": {
+            "x": 337,
+            "y": 27,
+            "w": 223,
+            "h": 453
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "lv03",
+          "rect": {
+            "x": 658,
+            "y": 22,
+            "w": 225,
+            "h": 458
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "lv04",
+          "rect": {
+            "x": 971,
+            "y": 25,
+            "w": 225,
+            "h": 455
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "lv05",
+          "rect": {
+            "x": 1275,
+            "y": 23,
+            "w": 226,
+            "h": 457
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "lv06",
+          "rect": {
+            "x": 30,
+            "y": 514,
+            "w": 241,
+            "h": 476
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "lv07",
+          "rect": {
+            "x": 329,
+            "y": 514,
+            "w": 244,
+            "h": 472
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "lv08",
+          "rect": {
+            "x": 651,
+            "y": 515,
+            "w": 236,
+            "h": 475
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "lv09",
+          "rect": {
+            "x": 951,
+            "y": 514,
+            "w": 242,
+            "h": 476
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "lv10",
+          "rect": {
+            "x": 1262,
+            "y": 513,
+            "w": 245,
+            "h": 477
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        }
+      ],
+      "notes": "矩形はアルファ主成分を基準に採寸。足元原点と手の接続点はゲーム表示に合わせて最終調整。衣装シートの上下段の境界付近は微小な隣接画素を確認する。",
+      "sha256": "e17086d11d4b932ed65273e01ccc0dbc2c6ee98bc620a9e1cfeb2490957c995e"
+    },
+    {
+      "id": "bunny_costumes",
+      "title": "バニー衣装・10段階",
+      "path": "assets/equipment/bunny_lv01-10.png",
+      "kind": "atlas",
+      "size": [
+        1536,
+        1024
+      ],
+      "alpha": true,
+      "frameCount": 10,
+      "frames": [
+        {
+          "name": "lv01",
+          "rect": {
+            "x": 66,
+            "y": 4,
+            "w": 220,
+            "h": 502
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "lv02",
+          "rect": {
+            "x": 371,
+            "y": 4,
+            "w": 220,
+            "h": 502
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "lv03",
+          "rect": {
+            "x": 665,
+            "y": 3,
+            "w": 223,
+            "h": 503
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "lv04",
+          "rect": {
+            "x": 958,
+            "y": 3,
+            "w": 227,
+            "h": 503
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "lv05",
+          "rect": {
+            "x": 1268,
+            "y": 3,
+            "w": 227,
+            "h": 503
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "lv06",
+          "rect": {
+            "x": 61,
+            "y": 499,
+            "w": 229,
+            "h": 508
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "lv07",
+          "rect": {
+            "x": 365,
+            "y": 499,
+            "w": 227,
+            "h": 508
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "lv08",
+          "rect": {
+            "x": 658,
+            "y": 499,
+            "w": 232,
+            "h": 508
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "lv09",
+          "rect": {
+            "x": 963,
+            "y": 499,
+            "w": 230,
+            "h": 508
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "lv10",
+          "rect": {
+            "x": 1270,
+            "y": 499,
+            "w": 227,
+            "h": 508
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        }
+      ],
+      "notes": "矩形はアルファ主成分を基準に採寸。足元原点と手の接続点はゲーム表示に合わせて最終調整。衣装シートの上下段の境界付近は微小な隣接画素を確認する。",
+      "sha256": "a160f9c35e23e9e319e8c299c89e2cac32bd2623f1d9a86417917c2514ce8d34"
+    },
+    {
+      "id": "boss_wear",
+      "title": "上司の衣装・10段階",
+      "path": "assets/characters/boss_wear_lv01-10.png",
+      "kind": "atlas",
+      "size": [
+        1536,
+        1024
+      ],
+      "alpha": true,
+      "frameCount": 10,
+      "frames": [
+        {
+          "name": "lv01",
+          "rect": {
+            "x": 25,
+            "y": 67,
+            "w": 283,
+            "h": 442
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "lv02",
+          "rect": {
+            "x": 316,
+            "y": 67,
+            "w": 288,
+            "h": 442
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "lv03",
+          "rect": {
+            "x": 627,
+            "y": 67,
+            "w": 287,
+            "h": 442
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "lv04",
+          "rect": {
+            "x": 924,
+            "y": 67,
+            "w": 298,
+            "h": 442
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "lv05",
+          "rect": {
+            "x": 1237,
+            "y": 68,
+            "w": 287,
+            "h": 441
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "lv06",
+          "rect": {
+            "x": 19,
+            "y": 544,
+            "w": 292,
+            "h": 442
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "lv07",
+          "rect": {
+            "x": 325,
+            "y": 542,
+            "w": 294,
+            "h": 444
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "lv08",
+          "rect": {
+            "x": 631,
+            "y": 544,
+            "w": 287,
+            "h": 442
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "lv09",
+          "rect": {
+            "x": 926,
+            "y": 542,
+            "w": 301,
+            "h": 444
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "name": "lv10",
+          "rect": {
+            "x": 1240,
+            "y": 544,
+            "w": 286,
+            "h": 442
+          },
+          "anchorNormalized": [
+            0.5,
+            1.0
+          ]
+        }
+      ],
+      "notes": "矩形はアルファ主成分を基準に採寸。足元原点と手の接続点はゲーム表示に合わせて最終調整。衣装シートの上下段の境界付近は微小な隣接画素を確認する。",
+      "sha256": "42d66b9608f615c32734b3acb6bed004a6dcce8f106ba76fb3180b4c85ab66ad"
+    },
+    {
+      "id": "bg_neon",
+      "title": "ネオンビル",
+      "path": "assets/backgrounds/neon.png",
+      "kind": "background",
+      "size": [
+        1536,
+        1024
+      ],
+      "seamless": false,
+      "layers": 1,
+      "alpha": false,
+      "sha256": "c264494f503b19fb338006a277ed796f24c186f4218d8eb909520244c7dffbce"
+    },
+    {
+      "id": "bg_coast",
+      "title": "海岸",
+      "path": "assets/backgrounds/coast.png",
+      "kind": "background",
+      "size": [
+        1536,
+        1024
+      ],
+      "seamless": false,
+      "layers": 1,
+      "alpha": false,
+      "sha256": "83055f3046c76bd49f38bd05a0815759f833243409bf2da2aab47f150e79700a"
+    },
+    {
+      "id": "bg_jungle",
+      "title": "ジャングル",
+      "path": "assets/backgrounds/jungle.png",
+      "kind": "background",
+      "size": [
+        1536,
+        1024
+      ],
+      "seamless": false,
+      "layers": 1,
+      "alpha": false,
+      "sha256": "236ef2db17ec8c9e5bf008cb2abda3b81ad4092cbe0daf45ab2127f701269e6f"
+    },
+    {
+      "id": "bg_ice",
+      "title": "氷山",
+      "path": "assets/backgrounds/ice.png",
+      "kind": "background",
+      "size": [
+        1536,
+        1024
+      ],
+      "seamless": false,
+      "layers": 1,
+      "alpha": false,
+      "sha256": "4f292258ce851705b10e0549c8e0f96696e7fc8168f3a25256d4dbd39fe696c5"
+    },
+    {
+      "id": "bg_magma",
+      "title": "マグマ山地",
+      "path": "assets/backgrounds/magma.png",
+      "kind": "background",
+      "size": [
+        1536,
+        1024
+      ],
+      "seamless": false,
+      "layers": 1,
+      "alpha": false,
+      "sha256": "1d334e8aa20f32b668a9b9fdd80372ac412125706850ab33555eb9f63882ef8e"
+    },
+    {
+      "id": "sakura_bromide",
+      "title": "全クリア特典・写真風サクラ",
+      "path": "assets/rewards/sakura_bromide.png",
+      "kind": "private_reward",
+      "size": [
+        1024,
+        1536
+      ],
+      "alpha": false,
+      "publicDeploymentAllowed": false,
+      "sha256": "e190bb8b910ab74505dc61efffa08b4e52df6b8b5529b0c6475c5c3ac3fc93e8"
+    }
+  ]
+}

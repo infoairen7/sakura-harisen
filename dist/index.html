@@ -1,0 +1,1975 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="オフィスの屋上から、仕事を押し付ける部長を紙ハリセンでぶっ飛ばす。全10コースの飛距離ゲーム。"><meta name="theme-color" content="#17162C"></head><body><title>サクラの定時退社！ぶっとびハリセン</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Martian+Mono:wght@500;700&display=swap">
+<style>
+/* 夜のオフィス×ネオン屋上。紺の地に桜ピンクを主役、水色を補助。稟議書・ハンコ・タイムカードの事務用品モチーフをUIに少しだけ。 */
+:root {
+  --night: #17162C;
+  --night-2: #1f1d3a;
+  --panel: #2B2344;
+  --panel-2: #372d57;
+  --line: #4a3f6e;
+  --sakura: #F48AB4;
+  --sakura-deep: #d9608f;
+  --sky: #8DCEEF;
+  --paper: #FFF8FC;
+  --dim: #b8aed2;
+  --mute: #8a80a8;
+  --stamp: #e8424f;
+  --gold: #EACB59;
+  --ok: #7fdcae;
+  --f-display: "Dela Gothic One", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+  --f-num: "Martian Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --f-body: system-ui, -apple-system, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic UI", Meiryo, sans-serif;
+  --r: 14px;
+  color-scheme: dark;
+}
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+body {
+  margin: 0; background: var(--night); color: var(--paper);
+  font: 15px/1.6 var(--f-body);
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+* { box-sizing: border-box; }
+button, a.btn { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--sky); outline-offset: 2px; }
+
+#app { position: fixed; inset: 0; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); overflow: hidden; }
+.screen { position: absolute; inset: 0; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); display: flex; flex-direction: column; overflow: hidden; }
+.scroll { overflow-y: auto; -webkit-overflow-scrolling: touch; flex: 1; min-height: 0; }
+.wrap { width: 100%; max-width: 760px; margin: 0 auto; padding-inline: 16px; }
+
+/* ---------- buttons ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .4em;
+  min-height: 48px; padding: 0 18px; border: 0; border-radius: var(--r);
+  background: var(--panel-2); color: var(--paper); font-weight: 700; letter-spacing: .02em;
+  box-shadow: 0 3px 0 #120f24; text-decoration: none; user-select: none; -webkit-user-select: none;
+  transition: transform .06s, filter .15s;
+}
+.btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #120f24; }
+.btn[disabled], .btn.disabled { opacity: .45; pointer-events: none; }
+.btn.primary { background: var(--sakura); color: #2a1030; box-shadow: 0 3px 0 var(--sakura-deep); }
+.btn.sky { background: var(--sky); color: #10223a; box-shadow: 0 3px 0 #5a9fc4; }
+.btn.ghost { background: transparent; box-shadow: inset 0 0 0 2px var(--line); }
+.btn.xl { min-height: 64px; font-size: 1.15rem; font-family: var(--f-display); font-weight: 400; letter-spacing: .06em; }
+.btn.icon { width: 48px; padding: 0; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; }
+.row > .btn { flex: 1 1 0; min-width: 0; }
+
+.topbar {
+  display: flex; align-items: center; gap: 10px; min-height: 56px; padding: 6px 12px;
+  background: linear-gradient(#17162Cf0, #17162Cc0);
+}
+.topbar h2 { margin: 0; font: 400 1.05rem/1.2 var(--f-display); letter-spacing: .04em; flex: 1; min-width: 0; }
+.chip {
+  display: inline-flex; align-items: center; gap: 4px; padding: 2px 9px; border-radius: 999px;
+  background: var(--panel); color: var(--dim); font: 600 .72rem/1.6 var(--f-num); letter-spacing: .04em; white-space: nowrap;
+}
+.chip b { color: var(--paper); font-weight: 700; }
+.coin { color: var(--gold); }
+.small { font-size: .8rem; color: var(--dim); }
+.num { font-family: var(--f-num); font-variant-numeric: tabular-nums; }
+
+/* ---------- title ---------- */
+#scr-title { background:
+  linear-gradient(180deg, #17162C00 30%, #17162Cee 72%, var(--night) 100%),
+  url("assets/thumbs/neon.webp") center 30% / cover no-repeat, var(--night); }
+.title-inner { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; gap: 14px; padding-block: 16px 22px; }
+.logo { text-align: center; }
+.logo .kicker { display: inline-block; font: 400 clamp(1rem, 4.6vw, 1.3rem)/1.2 var(--f-display); color: var(--sky); letter-spacing: .08em; transform: rotate(-3deg); }
+.logo h1 {
+  margin: 4px 0 0; font: 400 clamp(2.4rem, 12.5vw, 4.4rem)/1.02 var(--f-display); letter-spacing: .02em;
+  color: var(--sakura); text-shadow: 0 4px 0 #2a1030, 3px 0 0 #2a1030, -3px 0 0 #2a1030, 0 -3px 0 #2a1030, 0 8px 18px #0008;
+  text-wrap: balance;
+}
+.logo .sub { margin-top: 6px; color: var(--dim); font-size: .8rem; }
+#title-canvas { width: 100%; height: clamp(170px, 34vh, 300px); display: block; }
+.title-menu { display: grid; gap: 10px; }
+.title-menu .row .btn { min-height: 52px; }
+.title-stats { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+.title-foot { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.linkish { background: none; border: 0; color: var(--mute); font-size: .78rem; text-decoration: underline; min-height: 44px; padding: 0 4px; }
+
+/* ---------- course select ---------- */
+.world { margin-block: 14px 6px; }
+.world-head { display: flex; align-items: baseline; gap: 10px; margin: 0 2px 8px; }
+.world-head h3 { margin: 0; font: 400 1.05rem var(--f-display); letter-spacing: .05em; }
+.world-head .chip { background: transparent; box-shadow: inset 0 0 0 1px var(--line); }
+.courses { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 360px) { .courses { grid-template-columns: 1fr; } }
+.course {
+  position: relative; display: flex; flex-direction: column; text-align: left; padding: 0; border: 0; overflow: hidden;
+  border-radius: var(--r); background: var(--panel); box-shadow: 0 3px 0 #120f24; min-height: 172px; color: var(--paper);
+}
+.course .thumb { height: 74px; background-size: cover; background-position: center 62%; position: relative; }
+.course .thumb::after { content: ""; position: absolute; inset: 0; background: var(--tint, transparent); }
+.course .boss-mini { position: absolute; right: 4px; bottom: -4px; width: 42px; height: 64px; z-index: 1; }
+.course .meta { padding: 8px 10px 10px; display: grid; gap: 2px; }
+.course .no { font: 700 .66rem var(--f-num); color: var(--sky); letter-spacing: .06em; }
+.course .name { font-weight: 800; font-size: .95rem; line-height: 1.3; }
+.course .facts { display: flex; flex-wrap: wrap; gap: 2px 10px; font-size: .74rem; color: var(--dim); }
+.course .facts b { font-family: var(--f-num); color: var(--paper); font-weight: 700; }
+.course.locked { filter: grayscale(.85) brightness(.6); }
+.course .lock { position: absolute; inset: 0 0 auto 0; height: 74px; display: grid; place-items: center; z-index: 2; padding: 0 10px; text-align: center; line-height: 1.35; font-weight: 800; font-size: .74rem; color: var(--paper); text-shadow: 0 1px 3px #000; background: #0007; text-wrap: balance; }
+.stamp {
+  display: inline-grid; place-items: center; width: 54px; height: 54px; border-radius: 50%;
+  border: 3px solid var(--stamp); color: var(--stamp); font: 400 .78rem/1.05 var(--f-display); text-align: center;
+  transform: rotate(-14deg); background: #ffffff08; letter-spacing: .02em; pointer-events: none;
+}
+.course .stamp { position: absolute; left: 8px; top: 8px; width: 46px; height: 46px; font-size: .66rem; border-width: 2px; z-index: 2; background: #fff8fcd8; }
+
+/* ---------- sheet & modal ---------- */
+.overlay { position: absolute; inset: 0; z-index: 30; background: #0b0a18cc; display: flex; align-items: flex-end; justify-content: center; }
+.sheet {
+  width: 100%; max-width: 560px; max-height: 92%; overflow-y: auto; background: var(--panel);
+  border-radius: 20px 20px 0 0; padding: 18px 16px calc(16px + env(safe-area-inset-bottom, 0px)); display: grid; gap: 12px;
+  box-shadow: 0 -10px 40px #0008;
+}
+@media (min-width: 700px) { .overlay { align-items: center; } .sheet { border-radius: 20px; } }
+.sheet h3 { margin: 0; font: 400 1.25rem/1.3 var(--f-display); letter-spacing: .03em; text-wrap: balance; }
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; font-size: .9rem; }
+.kv dt { color: var(--dim); }
+.kv dd { margin: 0; font-weight: 700; }
+.toggle { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; padding: 6px 12px; border-radius: 12px; background: var(--night-2); }
+.toggle input { width: 46px; height: 26px; accent-color: var(--sakura); }
+.sheet-equip { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.mini-eq { display: flex; gap: 8px; align-items: center; background: var(--night-2); border-radius: 12px; padding: 8px; min-width: 0; }
+.mini-eq canvas { width: 40px; height: 76px; flex: none; }
+.mini-eq .t { font-size: .74rem; color: var(--dim); }
+.mini-eq .v { font-weight: 800; font-size: .9rem; line-height: 1.25; }
+.mini-eq .warn { color: var(--gold); font-size: .72rem; }
+
+/* ---------- play ---------- */
+#scr-play { background: #0c0b1a; }
+#stage { position: relative; flex: none; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+#game { display: block; touch-action: none; }
+#hud { flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: flex-end; gap: 10px; padding: 10px 16px 14px; }
+.hud-dist { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; }
+.hud-dist .big { font: 700 clamp(1.9rem, 9vw, 2.6rem)/1 var(--f-num); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+.hud-dist .big small { font-size: .5em; margin-left: 2px; color: var(--dim); }
+.hud-dist .side { text-align: right; font-size: .78rem; color: var(--dim); line-height: 1.5; }
+.hud-dist .side b { font-family: var(--f-num); color: var(--paper); }
+#progress { position: relative; height: 10px; border-radius: 6px; background: var(--panel); overflow: visible; }
+#progress i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 6px; background: linear-gradient(90deg, var(--sky), var(--sakura)); width: 0; }
+#progress .flag { position: absolute; top: -5px; width: 2px; height: 20px; background: var(--paper); }
+#progress .flag::after { content: "目標"; position: absolute; left: 4px; top: -3px; font-size: .62rem; color: var(--paper); white-space: nowrap; }
+#progress .best { position: absolute; top: -3px; width: 2px; height: 16px; background: var(--sky); }
+#timing { width: 100%; height: 38px; display: block; }
+.action {
+  width: 100%; min-height: 84px; border: 0; border-radius: 22px; touch-action: none;
+  font: 400 1.6rem/1 var(--f-display); letter-spacing: .12em; color: #2a1030; background: var(--sakura);
+  box-shadow: 0 5px 0 var(--sakura-deep), 0 0 0 0 #F48AB466; user-select: none; -webkit-user-select: none;
+}
+.action.run { background: var(--paper); box-shadow: 0 5px 0 #c9b5d1; animation: pulse .5s infinite alternate; }
+.action.wait { background: var(--panel-2); color: var(--dim); box-shadow: 0 5px 0 #120f24; }
+.action:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--sakura-deep); }
+@keyframes pulse { to { box-shadow: 0 5px 0 #c9b5d1, 0 0 0 8px #F48AB433; } }
+.hud-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.tag-practice { background: var(--sky); color: #10223a; }
+
+/* landscape: game fills, HUD floats */
+#scr-play.land #stage { position: absolute; inset: 0; }
+#scr-play.land .topbar { position: absolute; left: 0; right: 0; top: 0; z-index: 5; background: linear-gradient(#17162Cd8, #17162C00); }
+#scr-play.land #hud { position: absolute; inset: 0; pointer-events: none; padding: 62px 16px 12px; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto auto 1fr auto auto; gap: 6px 16px; justify-content: stretch; }
+#scr-play.land #hud > * { pointer-events: auto; }
+#scr-play.land .hud-dist { grid-column: 1; grid-row: 1; justify-self: start; align-items: baseline; gap: 14px; background: #17162Cb8; padding: 4px 12px; border-radius: 12px; }
+#scr-play.land .hud-dist .big { font-size: 1.7rem; }
+#scr-play.land .hud-dist .side { text-align: left; }
+#scr-play.land #progress { grid-column: 1; grid-row: 2; max-width: 340px; margin-top: 8px; }
+#scr-play.land .hud-tags { display: none; }
+#scr-play.land #hud-hint { grid-column: 1; grid-row: 4; align-self: end; max-width: 460px; background: #17162Cb8; border-radius: 8px; padding: 2px 10px; }
+#scr-play.land #hud-hint:empty { display: none; }
+#scr-play.land #timing { grid-column: 1; grid-row: 5; align-self: end; max-width: 440px; background: #17162Cc0; border-radius: 10px; }
+#scr-play.land .action { grid-column: 2; grid-row: 3 / 6; align-self: end; justify-self: end; width: 116px; height: 116px; min-height: 0; border-radius: 50%; font-size: 1.15rem; letter-spacing: .04em; }
+/* ---------- pause / countdown ---------- */
+#ov-pause { align-items: center; }
+.pause-card { width: min(92%, 380px); background: var(--panel); border-radius: 20px; padding: 20px 16px; display: grid; gap: 10px; text-align: center; }
+.pause-card h3 { margin: 0 0 4px; font: 400 1.4rem var(--f-display); }
+#countdown { position: absolute; inset: 0; z-index: 31; display: grid; place-items: center; pointer-events: none; font: 400 7rem/1 var(--f-display); color: var(--paper); text-shadow: 0 6px 0 #2a1030, 0 0 30px #F48AB488; }
+
+/* ---------- result ---------- */
+#ov-result { align-items: stretch; background: #0b0a18f7; padding-top: env(safe-area-inset-top, 0px); }
+.result { width: 100%; max-width: 560px; display: flex; flex-direction: column; min-height: 0; }
+.result .scroll { padding: 14px 16px 18px; display: grid; gap: 12px; align-content: start; }
+.res-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+.res-judge { font: 400 1.05rem var(--f-display); letter-spacing: .06em; }
+.res-judge.PERFECT { color: var(--gold); } .res-judge.GREAT { color: var(--sakura); } .res-judge.GOOD { color: var(--sky); } .res-judge.GRAZE { color: var(--dim); } .res-judge.MISS { color: var(--mute); }
+.res-dist { display: flex; align-items: flex-end; justify-content: center; gap: 6px; font: 700 clamp(3.2rem, 17vw, 4.6rem)/1 var(--f-num); font-variant-numeric: tabular-nums; letter-spacing: -.04em; }
+.res-dist small { font-size: .32em; color: var(--dim); margin-bottom: .5em; letter-spacing: 0; }
+.res-headline { position: relative; text-align: center; font: 400 1.6rem/1.2 var(--f-display); letter-spacing: .04em; color: var(--sakura); min-height: 1.2em; }
+.res-headline .stamp { position: absolute; right: 2px; top: -26px; width: 64px; height: 64px; font-size: .86rem; animation: stampin .35s cubic-bezier(.3,1.6,.5,1) both; }
+@keyframes stampin { from { transform: rotate(-14deg) scale(2.2); opacity: 0; } to { transform: rotate(-14deg) scale(1); opacity: 1; } }
+.res-hero { display: grid; grid-template-columns: 116px minmax(0, 1fr); align-items: center; gap: 10px; }
+#res-sakura { width: 116px; height: 170px; }
+.bubble { position: relative; background: var(--paper); color: #2a1030; padding: 10px 14px; border-radius: 16px; font-weight: 800; font-size: 1.05rem; }
+.bubble::before { content: ""; position: absolute; left: -9px; top: 50%; margin-top: -8px; border: 8px solid transparent; border-right-color: var(--paper); border-left: 0; }
+.stress { display: grid; gap: 4px; }
+.stress .lbl { display: flex; justify-content: space-between; font-size: .82rem; color: var(--dim); }
+.stress .lbl b { font-family: var(--f-num); color: var(--paper); }
+.stress .bar { height: 14px; border-radius: 8px; background: var(--night-2); overflow: hidden; box-shadow: inset 0 0 0 1px var(--line); }
+.stress .bar i { display: block; height: 100%; width: 100%; background: linear-gradient(90deg, #ff6f7d, #ffb36b); transition: width 1.1s cubic-bezier(.2,.8,.2,1); }
+.rewards { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.rewards li { display: flex; justify-content: space-between; gap: 10px; padding: 8px 12px; background: var(--panel); border-radius: 10px; font-size: .9rem; }
+.rewards li b { font-family: var(--f-num); }
+.rewards li.hl { box-shadow: inset 0 0 0 2px var(--gold); }
+.share { display: grid; gap: 8px; padding: 12px; border-radius: var(--r); background: var(--night-2); }
+.share h4 { margin: 0; font-size: .9rem; }
+.share img { width: 100%; aspect-ratio: 1200 / 630; max-width: 100%; border-radius: 8px; background: var(--panel); object-fit: cover; }
+.share .note { margin: 0; font-size: .74rem; color: var(--dim); }
+.res-actions { padding: 10px 16px calc(12px + env(safe-area-inset-bottom, 0px)); display: grid; gap: 8px; background: var(--night); box-shadow: 0 -8px 20px #0009; }
+
+/* ---------- equip ---------- */
+.eq-head { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
+.xpbar { flex: 1 1 160px; height: 8px; border-radius: 6px; background: var(--panel); overflow: hidden; }
+.xpbar i { display: block; height: 100%; background: var(--sky); }
+.eq-sec { margin-block: 16px; padding: 14px; background: var(--panel); border-radius: 18px; display: grid; gap: 12px; }
+.eq-sec h3 { margin: 0; font: 400 1.1rem var(--f-display); letter-spacing: .04em; }
+.eq-cur { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 12px; align-items: center; }
+.eq-cur canvas { width: 96px; height: 150px; background: var(--night-2); border-radius: 12px; }
+.eq-cur .lv { font: 700 .78rem var(--f-num); color: var(--sky); }
+.eq-cur .nm { font: 400 1.3rem/1.2 var(--f-display); }
+.eq-cur .eff { font-size: .8rem; color: var(--dim); }
+.eq-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+.eq-item { position: relative; display: grid; justify-items: center; gap: 2px; padding: 6px 2px 6px; border-radius: 10px; background: var(--night-2); min-width: 0; }
+.eq-item canvas { width: 100%; max-width: 54px; height: 84px; }
+.eq-item .l { font: 700 .62rem var(--f-num); color: var(--sky); }
+.eq-item .n { font-size: .62rem; line-height: 1.2; text-align: center; color: var(--dim); overflow-wrap: anywhere; }
+.eq-item.cur { box-shadow: inset 0 0 0 2px var(--sakura); }
+.eq-item.cur .n { color: var(--paper); font-weight: 800; }
+.eq-item.future canvas { opacity: .55; }
+.eq-item.capped canvas { filter: grayscale(1) brightness(.5); }
+.eq-item .tagc { position: absolute; top: 3px; right: 3px; font-size: .55rem; background: var(--sakura); color: #2a1030; border-radius: 6px; padding: 0 4px; font-weight: 800; }
+
+/* ---------- reward ---------- */
+.reward-card { margin-block: 16px; padding: 16px; border-radius: 18px; background: var(--panel); display: grid; gap: 12px; justify-items: center; text-align: center; }
+#reward-canvas { width: 180px; height: 270px; border-radius: 12px; background: radial-gradient(circle at 50% 35%, #3b2f60, #1b1834); }
+.clear-dots { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 4px; width: 100%; }
+.clear-dots span { height: 28px; border-radius: 7px; display: grid; place-items: center; font: 700 .7rem var(--f-num); background: var(--night-2); color: var(--mute); }
+.clear-dots span.on { background: var(--sakura); color: #2a1030; }
+.notice { padding: 12px 14px; border-radius: 12px; background: var(--night-2); font-size: .82rem; color: var(--dim); text-align: left; }
+.notice b { color: var(--paper); }
+
+/* ---------- dev ---------- */
+.dev-asset { margin-block: 12px; padding: 12px; background: var(--panel); border-radius: 14px; display: grid; gap: 8px; }
+.dev-asset canvas { width: 100%; height: auto; background: repeating-conic-gradient(#2f2850 0 25%, #241f40 0 50%) 0 0 / 16px 16px; border-radius: 8px; }
+.ok { color: var(--ok); } .ng { color: var(--stamp); }
+table.dev { width: 100%; border-collapse: collapse; font: .74rem var(--f-num); }
+table.dev td, table.dev th { padding: 4px 6px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+table.dev th:first-child, table.dev td:first-child { text-align: left; }
+.tbl { overflow-x: auto; }
+
+/* ---------- opening ---------- */
+#scr-opening { background: #000; }
+#op-canvas { flex: 1; width: 100%; min-height: 0; display: block; }
+.op-bar { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 16px 14px; }
+.op-bar .btn { white-space: nowrap; flex: none; }
+.op-dots { display: flex; gap: 6px; } .op-dots i { width: 8px; height: 8px; border-radius: 50%; background: var(--line); } .op-dots i.on { background: var(--sakura); }
+
+/* ---------- toast ---------- */
+#toast { position: absolute; left: 50%; top: calc(14px + env(safe-area-inset-top, 0px)); transform: translateX(-50%); z-index: 50; display: grid; gap: 6px; width: min(92%, 420px); pointer-events: none; }
+#toast div { background: var(--paper); color: #2a1030; padding: 10px 14px; border-radius: 12px; font-weight: 700; font-size: .86rem; box-shadow: 0 6px 20px #0008; animation: tin .25s ease-out; }
+#toast div.err { background: var(--stamp); color: #fff; }
+@keyframes tin { from { opacity: 0; transform: translateY(-8px); } }
+#boot { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; padding: 24px; z-index: 60; background: var(--night); }
+#boot p { color: var(--dim); }
+
+@media (prefers-reduced-motion: reduce) {
+  .action.run { animation: none; }
+  .res-headline .stamp { animation: none; }
+  .stress .bar i { transition: none; }
+}
+</style>
+<div id="app">
+
+  <div id="boot"><div><p class="small">読み込み中…</p></div></div>
+
+  <!-- タイトル -->
+  <section id="scr-title" class="screen" hidden>
+    <div class="title-inner wrap">
+      <div class="logo">
+        <span class="kicker">サクラの定時退社！</span>
+        <h1>ぶっとび<br>ハリセン</h1>
+        <div class="sub">テストプレイ版 ・ 全10コース</div>
+      </div>
+      <canvas id="title-canvas" aria-hidden="true"></canvas>
+      <div class="title-stats" id="title-stats"></div>
+      <div class="title-menu">
+        <button class="btn primary xl" id="btn-start">はじめる</button>
+        <div class="row">
+          <button class="btn" id="btn-go-courses">コース選択</button>
+          <button class="btn" id="btn-go-equip">装備・強化</button>
+        </div>
+        <div class="row">
+          <button class="btn" id="btn-go-reward">全クリア特典</button>
+          <button class="btn" id="btn-go-settings">設定</button>
+        </div>
+      </div>
+      <div class="title-foot">
+        <span class="small" id="cloud-badge"></span>
+        <button class="linkish" id="btn-go-dev">素材チェック・テスト用ツール</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- オープニング -->
+  <section id="scr-opening" class="screen" hidden>
+    <canvas id="op-canvas"></canvas>
+    <div class="op-bar">
+      <div class="op-dots" id="op-dots"><i></i><i></i><i></i><i></i></div>
+      <div class="row" style="flex:0 0 auto">
+        <button class="btn ghost" id="op-skip">スキップ</button>
+        <button class="btn primary" id="op-next">つぎへ</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- コース選択 -->
+  <section id="scr-courses" class="screen" hidden>
+    <div class="topbar">
+      <button class="btn icon ghost" data-back="title" aria-label="タイトルへ戻る">←</button>
+      <h2>コース選択</h2>
+      <span class="chip">PLAYER <b id="cs-plv">Lv.1</b></span>
+      <span class="chip coin"><b id="cs-coins">0</b>c</span>
+    </div>
+    <div class="scroll"><div class="wrap" id="course-list" style="padding-bottom:24px"></div></div>
+  </section>
+
+  <!-- 装備・強化 -->
+  <section id="scr-equip" class="screen" hidden>
+    <div class="topbar">
+      <button class="btn icon ghost" id="eq-back" aria-label="戻る">←</button>
+      <h2>装備・強化</h2>
+      <span class="chip coin"><b id="eq-coins">0</b>c</span>
+    </div>
+    <div class="scroll"><div class="wrap" style="padding-bottom:24px">
+      <div class="eq-head">
+        <span class="chip">PLAYER <b id="eq-plv">Lv.1</b></span>
+        <span class="chip">強化上限 <b id="eq-cap">Lv.2</b></span>
+        <div class="xpbar" title="次のレベルまで"><i id="eq-xpbar"></i></div>
+        <span class="small num" id="eq-xptext"></span>
+      </div>
+      <div class="eq-sec" id="eq-fan"></div>
+      <div class="eq-sec" id="eq-costume"></div>
+      <p class="small">強化費用は「30＋10×(現在Lv−1)」コイン。PLAYERレベルが上がると強化上限が Lv.2 → 4 → 6 → 8 → 10 と開放されます。</p>
+    </div></div>
+  </section>
+
+  <!-- プレイ -->
+  <section id="scr-play" class="screen" hidden>
+    <div class="topbar">
+      <div style="flex:1;min-width:0">
+        <div class="small num" id="pl-no" style="color:var(--sky);line-height:1.2">WORLD 1/5 · COURSE 1/10</div>
+        <h2 id="pl-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">残業フロア</h2>
+      </div>
+      <span class="chip">PLAYER <b id="pl-lv">Lv.1</b></span>
+      <button class="btn icon" id="btn-pause" aria-label="一時停止">Ⅱ</button>
+    </div>
+    <div id="stage"><canvas id="game"></canvas></div>
+    <div id="hud">
+      <div class="hud-dist">
+        <div class="big" id="hud-dist">0.0<small>m</small></div>
+        <div class="side">目標 <b id="hud-target">130</b> m<br>ベスト <b id="hud-best">—</b></div>
+      </div>
+      <div id="progress"><i id="prog-fill"></i><span class="flag" id="prog-flag"></span><span class="best" id="prog-best" hidden></span></div>
+      <div class="hud-tags" id="hud-tags"></div>
+      <p id="hud-hint" class="small" style="margin:0;min-height:1.6em"></p>
+      <canvas id="timing" aria-hidden="true"></canvas>
+      <button class="action" id="btn-action">走り出す</button>
+    </div>
+  </section>
+
+  <!-- 全クリア特典 -->
+  <section id="scr-reward" class="screen" hidden>
+    <div class="topbar">
+      <button class="btn icon ghost" data-back="title" aria-label="タイトルへ戻る">←</button>
+      <h2>全クリア特典</h2>
+    </div>
+    <div class="scroll"><div class="wrap" style="padding-bottom:24px">
+      <div class="reward-card">
+        <canvas id="reward-canvas" aria-label="特典ブロマイドのシルエット"></canvas>
+        <div style="font:400 1.2rem var(--f-display)" id="reward-title">サクラのブロマイド</div>
+        <div class="clear-dots" id="reward-dots"></div>
+        <div class="small" id="reward-cond">全10コースをクリアすると解放されます。</div>
+      </div>
+      <div class="notice" id="reward-notice"></div>
+    </div></div>
+  </section>
+
+  <!-- 設定 -->
+  <section id="scr-settings" class="screen" hidden>
+    <div class="topbar">
+      <button class="btn icon ghost" data-back="title" aria-label="タイトルへ戻る">←</button>
+      <h2>設定</h2>
+    </div>
+    <div class="scroll"><div class="wrap" style="display:grid;gap:10px;padding-block:14px 24px">
+      <label class="toggle" for="set-sound"><span>効果音</span><input type="checkbox" id="set-sound"></label>
+      <label class="toggle" for="set-motion"><span>揺れ・演出を減らす</span><input type="checkbox" id="set-motion"></label>
+      <button class="btn" id="btn-replay-op">オープニングをもう一度見る</button>
+      <button class="btn ghost" id="btn-reset">セーブデータを初期化</button>
+      <p class="small" id="save-info"></p>
+    </div></div>
+  </section>
+
+  <!-- 開発用 -->
+  <section id="scr-dev" class="screen" hidden>
+    <div class="topbar">
+      <button class="btn icon ghost" data-back="title" aria-label="タイトルへ戻る">←</button>
+      <h2>素材チェック（開発用）</h2>
+    </div>
+    <div class="scroll"><div class="wrap" style="padding-bottom:24px">
+      <div class="dev-asset">
+        <b>テスト用ツール</b>
+        <p class="small" style="margin:0">テストプレイを早く進めるための機能です。本公開版では外します。</p>
+        <div class="row">
+          <button class="btn" id="dev-coins">コイン +1000</button>
+          <button class="btn" id="dev-xp">XP +250</button>
+        </div>
+        <div class="row">
+          <button class="btn" id="dev-clear-all">全コースをクリア済みにする</button>
+          <button class="btn ghost" id="dev-reset">セーブ初期化</button>
+        </div>
+      </div>
+      <div class="dev-asset">
+        <b>推奨装備・PERFECT時の飛距離（設定JSONから計算）</b>
+        <div class="tbl"><table class="dev" id="dev-balance"></table></div>
+      </div>
+      <div id="dev-assets"></div>
+    </div></div>
+  </section>
+
+  <!-- 装備確認シート -->
+  <div id="ov-sheet" class="overlay" hidden>
+    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sh-title">
+      <div class="small num" id="sh-no" style="color:var(--sky)"></div>
+      <h3 id="sh-title"></h3>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) 70px;gap:10px;align-items:center">
+        <dl class="kv" id="sh-kv"></dl>
+        <canvas id="sh-boss" style="width:70px;height:106px" aria-label="このコースの部長"></canvas>
+      </div>
+      <div class="sheet-equip" id="sh-equip"></div>
+      <label class="toggle" for="sh-practice"><span>練習モード<br><span class="small">判定の幅が1.5倍。記録・クリア・報酬は付きません</span></span><input type="checkbox" id="sh-practice"></label>
+      <div class="row">
+        <button class="btn" id="sh-equip-btn">強化する</button>
+        <button class="btn ghost" id="sh-close">やめる</button>
+      </div>
+      <button class="btn primary xl" id="sh-go">屋上へ行く</button>
+    </div>
+  </div>
+
+  <!-- 一時停止 -->
+  <div id="ov-pause" class="overlay" hidden>
+    <div class="pause-card">
+      <h3>一時停止中</h3>
+      <button class="btn primary xl" id="ps-resume">再開する</button>
+      <label class="toggle" for="ps-sound"><span>効果音</span><input type="checkbox" id="ps-sound"></label>
+      <label class="toggle" for="ps-motion"><span>揺れ・演出を減らす</span><input type="checkbox" id="ps-motion"></label>
+      <button class="btn ghost" id="ps-quit">コース選択へ戻る（この挑戦は無効）</button>
+    </div>
+  </div>
+  <div id="countdown" hidden></div>
+
+  <!-- 結果 -->
+  <div id="ov-result" class="overlay" hidden>
+    <div class="result">
+      <div class="scroll">
+        <div class="res-top">
+          <span class="chip num" id="res-course"></span>
+          <span class="res-judge" id="res-judge"></span>
+        </div>
+        <div class="res-dist"><span id="res-dist">0.0</span><small>m</small></div>
+        <div class="res-headline" id="res-headline"></div>
+        <div class="res-hero">
+          <canvas id="res-sakura" aria-hidden="true"></canvas>
+          <div class="bubble" id="res-line">今日は定時！</div>
+        </div>
+        <div class="stress">
+          <div class="lbl"><span>ストレス</span><span><b id="res-stress">100</b> / 100</span></div>
+          <div class="bar"><i id="res-stress-bar"></i></div>
+        </div>
+        <ul class="rewards" id="res-rewards"></ul>
+        <div class="share">
+          <h4>結果画像</h4>
+          <img id="res-img" alt="今回の結果画像（1200×630）">
+          <div class="row">
+            <button class="btn sky" id="btn-share-img" hidden>画像を共有</button>
+            <button class="btn" id="btn-save-img">画像を保存</button>
+            <a class="btn" id="btn-x" target="_blank" rel="noopener">Xで投稿文を開く</a>
+          </div>
+          <p class="note">Xの投稿画面には画像を自動で添付できません。保存した画像を投稿画面で添付してください。画像は長押しでも保存できます。</p>
+        </div>
+      </div>
+      <div class="res-actions">
+        <button class="btn primary xl" id="btn-retry">もう一回</button>
+        <div class="row">
+          <button class="btn" id="btn-res-equip">強化する</button>
+          <button class="btn sky" id="btn-next">次のコースへ</button>
+        </div>
+        <button class="btn ghost" id="btn-res-courses">コース選択</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 確認ダイアログ -->
+  <div id="ov-modal" class="overlay" hidden>
+    <div class="sheet" role="alertdialog" aria-modal="true" aria-labelledby="md-title">
+      <h3 id="md-title"></h3>
+      <p id="md-text" style="margin:0;color:var(--dim)"></p>
+      <div class="row">
+        <button class="btn ghost" id="md-cancel">やめる</button>
+        <button class="btn primary" id="md-ok">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" aria-live="polite"></div>
+</div>
+
+<script>
+'use strict';
+(() => {
+// =====================================================================
+//  サクラの定時退社！ぶっとびハリセン — テストプレイ版
+//  数値の正本: config/game_balance.json / 素材矩形: config/asset_manifest.json
+// =====================================================================
+const GAME_URL = 'https://infoairen7.github.io/sakura-harisen/';            // 公開URL。空なら現在のページURLを使う
+const BUILD_ID = 'test-1';
+
+const $ = (s, r = document) => r.querySelector(s);
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const ease = t => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+const DEG = Math.PI / 180;
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = Math.max(1, Math.round(w)); c.height = Math.max(1, Math.round(h)); return c; }
+function mulberry32(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+/** 表示は小数1桁（切り捨て）。判定は丸め前の値で行う */
+function fmt1(d) { if (!Number.isFinite(d)) return '0.0'; return (Math.floor(d * 10 + 1e-7) / 10).toFixed(1); }
+function cap(name) {
+  try { if (window.claude && typeof window.claude.use === 'function') return window.claude.use(name).catch(() => null); } catch (e) { /* noop */ }
+  return Promise.resolve(null);
+}
+function toast(msg, kind) {
+  const el = document.createElement('div'); el.textContent = msg; if (kind === 'error') el.className = 'err';
+  $('#toast').appendChild(el); setTimeout(() => el.remove(), kind === 'error' ? 5200 : 2600);
+}
+function confirmModal(title, text, okLabel = 'OK', cancelLabel = 'やめる') {
+  return new Promise(res => {
+    const ov = $('#ov-modal'); $('#md-title').textContent = title; $('#md-text').textContent = text;
+    $('#md-ok').textContent = okLabel; $('#md-cancel').textContent = cancelLabel; $('#md-cancel').hidden = !cancelLabel;
+    ov.hidden = false;
+    $('#md-ok').onclick = () => { ov.hidden = true; res(true); };
+    $('#md-cancel').onclick = () => { ov.hidden = true; res(false); };
+  });
+}
+
+// ---------------------------------------------------------------------
+//  設定・素材
+// ---------------------------------------------------------------------
+let CFG = null, MAN = null; const A = {};           // A[id] = manifest asset
+const IMG = {}, IMGP = {}, IMG_STATUS = {};
+const EXTRA = { mask_sakura: 'assets/sakura_costume_mask.png', mask_boss: 'assets/boss_shirt_mask.png' };
+function webPath(p) { return p.replace(/\.png$/, '.webp'); }   // 原本PNGを変えず、配信用WebP派生を読む
+function loadImg(id) {
+  if (IMGP[id]) return IMGP[id];
+  const path = EXTRA[id] || (A[id] ? webPath(A[id].path) : null);
+  IMGP[id] = new Promise(res => {
+    if (!path) { IMG_STATUS[id] = { ok: false, path: '(manifestに無し)' }; res(null); return; }
+    const im = new Image(); im.decoding = 'async';
+    im.onload = () => { IMG[id] = im; IMG_STATUS[id] = { ok: true, path, w: im.naturalWidth, h: im.naturalHeight }; res(im); };
+    im.onerror = () => { IMG_STATUS[id] = { ok: false, path }; toast(`画像を読み込めませんでした: ${path}`, 'error'); res(null); };
+    im.src = path;
+  });
+  return IMGP[id];
+}
+const BIOME = {
+  neon:   { name: 'ネオンビル', gl: 892, wall: '#1b1b42', wall2: '#262760', top: '#3a3a78', win: ['#ffd27a', '#5ee0ff', '#ff7ad8'], dust: '#8f8fd0', amb: 'star' },
+  coast:  { name: '海岸', gl: 866, wall: '#cdbda3', wall2: '#b9a88e', top: '#e8dcc6', win: ['#7fc3e8', '#a9dcf2', '#6aa8cf'], dust: '#e9c48f', amb: 'glint' },
+  jungle: { name: 'ジャングル', gl: 856, wall: '#7f8a7a', wall2: '#6d7869', top: '#98a690', win: ['#c8f0e8', '#a4d8c8', '#e6f5c8'], dust: '#a37b4c', amb: 'leaf' },
+  ice:    { name: '氷山', gl: 866, wall: '#8e98b8', wall2: '#7c86a8', top: '#eef2ff', win: ['#bfe6ff', '#dff2ff', '#a3c8f0'], dust: '#f4f6ff', amb: 'snow', slide: true },
+  magma:  { name: 'マグマ山地', gl: 868, wall: '#2b2630', wall2: '#221e27', top: '#3d3640', win: ['#ff9a4a', '#ffcf6a', '#ff6a3a'], dust: '#6b6170', amb: 'ember' },
+};
+// 2コース目は同じ背景に薄いオーバーレイと粒子量の差を付ける
+const COURSE_FX = { 1: { tint: null, dens: 1 }, 2: { tint: 'rgba(70,20,140,0.22)', dens: 1.5 }, 3: { tint: null, dens: 1 }, 4: { tint: 'rgba(255,110,60,0.20)', dens: 1.4 },
+  5: { tint: null, dens: 1 }, 6: { tint: 'rgba(220,255,240,0.16)', dens: 1.6 }, 7: { tint: null, dens: 1 }, 8: { tint: 'rgba(140,180,255,0.22)', dens: 2.2 },
+  9: { tint: null, dens: 1 }, 10: { tint: 'rgba(255,60,30,0.18)', dens: 2 } };
+function envLabel(c) {
+  const w = c.windAcceleration, g = c.gravity, parts = [];
+  if (w > 0.3) parts.push('追い風'); else if (w > 0) parts.push('弱い追い風'); else if (w < 0) parts.push('弱い向かい風');
+  if (g > 9.8) parts.push('やや強い重力'); else if (g < 9.8) parts.push('軽い重力');
+  return parts.length ? parts.join('・') : '標準';
+}
+function courseById(id) { return CFG.courses.find(c => c.id === id); }
+function worldName(c) { return BIOME[c.biome].name; }
+function courseShort(c) { const i = c.name.indexOf('・'); return i >= 0 ? c.name.slice(i + 1) : c.name; }
+
+// ---------------------------------------------------------------------
+//  スプライト（アトラス切り出し・衣装の色替え・汚れ・ミップ）
+// ---------------------------------------------------------------------
+function buildMips(c) {
+  const mips = [c]; let cur = c;
+  while (cur.width > 40 && cur.height > 40 && mips.length < 6) {
+    const n = mkCanvas(Math.ceil(cur.width / 2), Math.ceil(cur.height / 2)); const x = n.getContext('2d');
+    x.imageSmoothingEnabled = true; x.imageSmoothingQuality = 'high'; x.drawImage(cur, 0, 0, n.width, n.height);
+    mips.push(n); cur = n;
+  }
+  return mips;
+}
+function frameObj(c) { return { c, w: c.width, h: c.height, mips: buildMips(c) }; }
+const atlasCache = {};
+function atlasFrames(id) {
+  if (atlasCache[id]) return atlasCache[id];
+  const im = IMG[id]; if (!im || !A[id]) return null;
+  atlasCache[id] = A[id].frames.map(f => { const r = f.rect; const c = mkCanvas(r.w, r.h); c.getContext('2d').drawImage(im, r.x, r.y, r.w, r.h, 0, 0, r.w, r.h); return frameObj(c); });
+  return atlasCache[id];
+}
+function hexRgb(h) { return [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)); }
+const sakCache = new Map();
+/** サクラ基本8ポーズ。Lv2以上は衣服マスク領域だけを設定表の色へ置き換える（髪・肌・白シャツ・タイツは除外） */
+function sakuraFrames(lv) {
+  if (sakCache.has(lv)) return sakCache.get(lv);
+  const im = IMG.sakura_poses, mk = IMG.mask_sakura; if (!im) return null;
+  const pal = hexRgb(CFG.equipmentPalette[lv - 1]);
+  const L = (0.299 * pal[0] + 0.587 * pal[1] + 0.114 * pal[2]) / 255;
+  const dark = pal.map((v, i) => v * (0.22 + 0.2 * L) * 0.6 + [42, 26, 58][i] * 0.4);
+  const lite = pal.map(v => Math.min(255, v + 18));
+  const frames = A.sakura_poses.frames.map(f => {
+    const r = f.rect; const c = mkCanvas(r.w, r.h); const x = c.getContext('2d', { willReadFrequently: lv > 1 });
+    x.drawImage(im, r.x, r.y, r.w, r.h, 0, 0, r.w, r.h);
+    if (lv > 1 && mk) {
+      const d = x.getImageData(0, 0, r.w, r.h);
+      const mc = mkCanvas(r.w, r.h).getContext('2d', { willReadFrequently: true }); mc.drawImage(mk, r.x, r.y, r.w, r.h, 0, 0, r.w, r.h);
+      const m = mc.getImageData(0, 0, r.w, r.h).data, p = d.data;
+      for (let i = 0; i < p.length; i += 4) {
+        if (m[i] < 128 || p[i + 3] === 0) continue;
+        const lum = (0.299 * p[i] + 0.587 * p[i + 1] + 0.114 * p[i + 2]) / 255;
+        const t = Math.pow(clamp((lum - 0.03) / 0.27, 0, 1), 0.55);
+        p[i] = dark[0] + (lite[0] - dark[0]) * t; p[i + 1] = dark[1] + (lite[1] - dark[1]) * t; p[i + 2] = dark[2] + (lite[2] - dark[2]) * t;
+      }
+      x.putImageData(d, 0, 0);
+    }
+    return frameObj(c);
+  });
+  sakCache.set(lv, frames); return frames;
+}
+let bossMaskAlpha = null;
+function bossMask() {
+  if (bossMaskAlpha || !IMG.mask_boss) return bossMaskAlpha;
+  const im = IMG.mask_boss; const c = mkCanvas(im.naturalWidth, im.naturalHeight); const x = c.getContext('2d', { willReadFrequently: true });
+  x.drawImage(im, 0, 0); const d = x.getImageData(0, 0, c.width, c.height);
+  for (let i = 0; i < d.data.length; i += 4) { const v = d.data[i]; d.data[i] = d.data[i + 1] = d.data[i + 2] = 255; d.data[i + 3] = v; }
+  x.putImageData(d, 0, 0); bossMaskAlpha = { c, data: d.data, w: c.width }; return bossMaskAlpha;
+}
+const bossCache = new Map();
+/** 上司の基本ポーズへ、コース段階に応じた少量の泥・すすをシャツ領域だけに重ねる */
+function bossFrames(wear) {
+  if (bossCache.has(wear)) return bossCache.get(wear);
+  const im = IMG.boss_poses; if (!im) return null; const mk = bossMask();
+  const frames = A.boss_poses.frames.map((f, fi) => {
+    const r = f.rect; const c = mkCanvas(r.w, r.h); const x = c.getContext('2d'); x.drawImage(im, r.x, r.y, r.w, r.h, 0, 0, r.w, r.h);
+    const n = Math.round((wear - 1) * 2.4);
+    if (n > 0 && mk) {
+      const dc = mkCanvas(r.w, r.h); const dx = dc.getContext('2d'); const rnd = mulberry32(wear * 977 + fi * 131);
+      for (let k = 0; k < n; k++) {
+        let px = 0, py = 0, tries = 0;
+        do { px = rnd() * r.w | 0; py = rnd() * r.h | 0; tries++; } while (mk.data[((r.y + py) * mk.w + r.x + px) * 4 + 3] < 128 && tries < 300);
+        const rad = 7 + rnd() * 12 + wear * 1.4; const soot = rnd() < 0.42; const col = soot ? '62,58,56' : '122,92,50';
+        const g = dx.createRadialGradient(px, py, 0, px, py, rad); g.addColorStop(0, `rgba(${col},0.55)`); g.addColorStop(0.6, `rgba(${col},0.3)`); g.addColorStop(1, `rgba(${col},0)`);
+        dx.fillStyle = g; dx.beginPath(); dx.arc(px, py, rad, 0, 7); dx.fill();
+        dx.fillStyle = `rgba(${col},0.5)`; for (let s = 0; s < 5; s++) dx.fillRect(px + (rnd() - 0.5) * rad * 2, py + (rnd() - 0.5) * rad * 2, 3, 3);
+      }
+      dx.globalCompositeOperation = 'destination-in'; dx.drawImage(mk.c, r.x, r.y, r.w, r.h, 0, 0, r.w, r.h);
+      x.drawImage(dc, 0, 0);
+    }
+    return frameObj(c);
+  });
+  bossCache.set(wear, frames); return frames;
+}
+function pickMip(fr, devScale) {
+  let i = 0; while (i + 1 < fr.mips.length && devScale * Math.pow(2, i + 1) <= 1.0001) i++;
+  return fr.mips[i];
+}
+function blit(ctx, fr, dx, dy, dw, dh, devScale) {
+  const m = pickMip(fr, devScale); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(m, dx, dy, dw, dh);
+}
+function drawMissing(ctx, x, y, w, h, label) {
+  ctx.save(); ctx.strokeStyle = '#ff2fb0'; ctx.setLineDash([4, 3]); ctx.lineWidth = 2; ctx.strokeRect(x, y, w, h);
+  ctx.fillStyle = '#ff2fb0'; ctx.font = '700 10px system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.fillText(label || '画像なし', x + w / 2, y + h / 2); ctx.restore();
+}
+// サクラ8ポーズの胴体中心X（原本px）と、ハリセンを持つ手の位置・角度（度、0=真上）・手前描画か
+const SAK = { idle: 0, run_a: 1, run_b: 2, windup: 3, swing: 4, follow: 5, victory: 6, fistpump: 7 };
+const SAK_AX = [100, 165, 165, 112, 125, 140, 117, 86];
+const SAK_HAND = [[42, 242, -18, 0], [65, 255, -62, 0], [69, 230, -56, 0], [32, 130, -40, 0], [290, 150, 82, 1], [290, 175, 118, 1], [214, 68, 22, 0], [154, 180, 12, 0]];
+const BOSS = { idle: 0, brace: 1, launch: 2, fly: 3, tumble: 4, land: 5, thumbs: 6, celebrate: 7 };
+const BOSS_AX = [117, 150, 182, 184, 196, 190, 130, 162];
+const M_PER_PX = 0.00388;   // 原本1px = 0.00388m（サクラ約1.9m）
+// ---- アニメーション層：ポーズ間のクロスフェード（中割り）・伸び縮み・残像・ハリセンの軌跡 ----
+const smooth = v => v <= 0 ? 0 : v >= 1 ? 1 : v * v * (3 - 2 * v);
+const easeIn = v => { v = clamp(v, 0, 1); return v * v * v; };
+const easeOut = v => { v = clamp(v, 0, 1); return 1 - Math.pow(1 - v, 3); };
+const GHOST_SAK = 'rgba(255,140,200,0.82)', GHOST_BOSS = 'rgba(214,238,255,0.85)', GHOST_FAN = 'rgba(255,250,252,0.95)';
+/** 残像用に単色で染めたフレーム（キャッシュ） */
+function tinted(fr, col) {
+  if (!fr) return fr; fr._t = fr._t || {};
+  if (!fr._t[col]) { const c = mkCanvas(fr.w, fr.h); const x = c.getContext('2d'); x.drawImage(fr.c, 0, 0); x.globalCompositeOperation = 'source-atop'; x.fillStyle = col; x.fillRect(0, 0, fr.w, fr.h); fr._t[col] = frameObj(c); }
+  return fr._t[col];
+}
+function sakH(p) { return A.sakura_poses ? A.sakura_poses.frames[p].rect.h : 490; }
+/** 手の位置（足元・胴体中心基準の原本px） */
+function handOf(p) { return [SAK_HAND[p][0] - SAK_AX[p], SAK_HAND[p][1] - sakH(p)]; }
+function fanFor(pA, pB, k, ang, front) {
+  const a = handOf(pA), b = pB != null ? handOf(pB) : a;
+  return { hx: lerp(a[0], b[0], k), hy: lerp(a[1], b[1], k), ang, front: front != null ? front : !!SAK_HAND[(pB != null && k >= 0.5) ? pB : pA][3] };
+}
+function drawFan(ctx, lv, hx, hy, angDeg, s, devS, tint) {
+  let fr = atlasFrames('harisen')?.[lv - 1]; if (fr && tint) fr = tinted(fr, tint);
+  ctx.save(); ctx.translate(hx, hy); ctx.rotate(angDeg * DEG);
+  if (fr) blit(ctx, fr, -fr.w * 0.5 * s, -fr.h * 0.68 * s, fr.w * s, fr.h * s, devS); else drawMissing(ctx, -12, -70, 24, 80, 'ハリセン');
+  ctx.restore();
+}
+/** クロスフェードの重み：Aは後半でだけ薄くし、体の抜けを防ぐ */
+function xfade(k) { k = clamp(k, 0, 1); return { a: k >= 0.999 ? 0 : k > 0.5 ? 1 - smooth((k - 0.5) / 0.5) * 0.85 : 1, b: k }; }
+/** サクラ。st={lv,fanLv,A,B,k,rot,sx,sy,lean,fan:{hx,hy,ang,front},smear:[角度]}。(x,y)=足元 */
+function drawSakuraSt(ctx, st, x, y, s, devS, tint, alpha = 1) {
+  const frs = sakuraFrames(st.lv); if (!frs) { drawMissing(ctx, x - 25, y - 100, 50, 100, 'サクラ'); return; }
+  ctx.save(); ctx.translate(x, y);
+  if (st.rot) ctx.rotate(st.rot); if (st.lean) ctx.transform(1, 0, -st.lean, 1, 0, 0); ctx.scale(st.sx || 1, st.sy || 1);
+  const fanS = s * 0.8, fd = devS * 0.8, f = st.fan;
+  const fan = () => {
+    if (!f || st.noFan) return;
+    if (st.smear && !tint) st.smear.forEach((a, i) => { ctx.globalAlpha = alpha * 0.36 * (1 - i / st.smear.length); drawFan(ctx, st.fanLv, f.hx * s, f.hy * s, a, fanS, fd, GHOST_FAN); });
+    ctx.globalAlpha = alpha; drawFan(ctx, st.fanLv, f.hx * s, f.hy * s, f.ang, fanS, fd, tint);
+  };
+  if (f && !f.front) fan();
+  const body = (p, a) => { if (a <= 0.001) return; let fr = frs[p]; if (!fr) return; if (tint) fr = tinted(fr, tint); ctx.globalAlpha = alpha * a; blit(ctx, fr, -SAK_AX[p] * s, -fr.h * s, fr.w * s, fr.h * s, devS); };
+  if (st.B != null && st.k > 0.001) { const w = xfade(st.k); body(st.A, w.a); body(st.B, w.b); } else body(st.A, 1);
+  ctx.globalAlpha = alpha; if (f && f.front) fan();
+  ctx.restore();
+}
+function sakStatic(lv, fanLv, pose, extra = {}) {
+  return Object.assign({ lv, fanLv, A: pose, B: null, k: 0, rot: 0, sx: 1, sy: 1, lean: 0, fan: fanFor(pose, null, 0, SAK_HAND[pose][2]) }, extra);
+}
+/** 1ポーズだけ描く簡易版（結果画像・特典シルエット用） */
+function drawSakura(ctx, costumeLv, fanLv, pose, x, y, s, devS, opt = {}) {
+  const st = sakStatic(costumeLv, fanLv, pose, { rot: opt.rot || 0, noFan: opt.fan === false }); if (opt.fanAdd) st.fan.ang += opt.fanAdd;
+  drawSakuraSt(ctx, st, x, y, s, devS, null, opt.alpha != null ? opt.alpha : 1);
+}
+const WEAR = 8;   // 上司の衣装段階の立ち絵を表す疑似ポーズ番号
+function bossFr(wear, p) { return p === WEAR ? atlasFrames('boss_wear')?.[wear - 1] : bossFrames(wear)?.[p]; }
+/** 上司。st={wear,A,B,k,center,rot,sx,sy,flip}。center=trueなら(x,y)は最下点で、胴体中心を軸に回す */
+function drawBossSt(ctx, st, x, y, s, devS, tint, alpha = 1) {
+  const one = (p, a) => {
+    if (a <= 0.001) return; let fr = bossFr(st.wear, p);
+    if (!fr) { drawMissing(ctx, x - 25, y - 80, 50, 80, '部長'); return; } if (tint) fr = tinted(fr, tint);
+    ctx.save(); ctx.globalAlpha = alpha * a; const sxv = st.sx || 1, syv = st.sy || 1;
+    if (st.center) { ctx.translate(x, y - fr.h * s * 0.5 * syv); if (st.rot) ctx.rotate(st.rot); ctx.scale(sxv, syv); if (st.flip) ctx.scale(-1, 1); blit(ctx, fr, -fr.w * s / 2, -fr.h * s / 2, fr.w * s, fr.h * s, devS); }
+    else { ctx.translate(x, y); if (st.rot) ctx.rotate(st.rot); ctx.scale(sxv, syv); if (st.flip) ctx.scale(-1, 1); const ax = p === WEAR ? fr.w * 0.5 : BOSS_AX[p]; blit(ctx, fr, -ax * s, -fr.h * s, fr.w * s, fr.h * s, devS); }
+    ctx.restore();
+  };
+  if (st.B != null && st.k > 0.001) { const w = xfade(st.k); one(st.A, w.a); one(st.B, w.b); } else one(st.A, 1);
+}
+function drawBoss(ctx, wear, pose, x, y, s, devS, opt = {}) {
+  drawBossSt(ctx, { wear, A: pose, B: null, k: 0, center: false, rot: opt.rot || 0, sx: 1, sy: 1, flip: !!opt.flip }, x, y, s, devS);
+}
+function drawWearStand(ctx, wear, x, y, s, devS, flip) { drawBossSt(ctx, { wear, A: WEAR, B: null, k: 0, center: false, sx: 1, sy: 1, flip: !!flip }, x, y, s, devS); }
+
+// ---- 動きの定義（すべて時刻の関数なので、残像は少し前の時刻を描くだけで作れる） ----
+const STRIDE = 0.48;
+function sakSpeed(r, t) { return (sakXAt(r, t + 0.01) - sakXAt(r, t - 0.01)) / 0.02; }
+/** 助走：走り2枚を中割りでつなぎ、接地でつぶれ・空中で伸びる */
+function runPose(r, ta) {
+  const x = sakXAt(r, ta); const ph = Math.max(0, (x - X0) / STRIDE); const n = Math.floor(ph), f = ph - n;
+  const sp = clamp(sakSpeed(r, ta) / 5, 0, 1);
+  const sy = 0.955 + 0.075 * Math.sin(Math.PI * f);
+  const st = { A: (n & 1) ? SAK.run_b : SAK.run_a, B: (n & 1) ? SAK.run_a : SAK.run_b, k: smooth((f - 0.6) / 0.4), sy, sx: 1 + (1 - sy) * 0.7,
+    lean: 0.05 + 0.1 * sp, rot: 0.025 * Math.sin(2 * Math.PI * f), bob: 0.09 * Math.sin(Math.PI * f) * (0.35 + 0.65 * sp), sp, f,
+    fanAng: -60 + 9 * Math.sin(2 * Math.PI * f + 0.6) - 10 * sp };
+  const s0 = ta - r.startT; if (s0 < 0.14) { const u = smooth(s0 / 0.14); st.A = SAK.idle; st.B = SAK.run_a; st.k = u; st.lean *= u; st.fanAng = lerp(-18, st.fanAng, u); }
+  return st;
+}
+/** スイング：振りかぶり(50ms)→振り抜き(50ms・接触)→フォロースルー。from=タップ時点の姿勢 */
+function swingPose(d, from) {
+  const Wd = SAK.windup, Sw = SAK.swing, Fo = SAK.follow; const fa = from.fanAng != null ? from.fanAng : -60;
+  const fromB = from.B != null && from.k >= 0.5 ? from.B : from.A;
+  if (d < 0.05) { const u = smooth(d / 0.05); return { A: fromB, B: Wd, k: u, sy: lerp(from.sy || 1, 0.95, u), sx: lerp(from.sx || 1, 1.035, u), lean: lerp(from.lean || 0, -0.03, u), rot: 0, fanAng: lerp(fa, -54, easeOut(d / 0.05)), fA: fromB, fB: Wd, fk: u, front: false }; }
+  if (d < 0.1) { const u = (d - 0.05) / 0.05, e = easeIn(u); return { A: Wd, B: Sw, k: smooth(u * 1.5), sy: lerp(0.95, 1.035, e), sx: lerp(1.035, 0.975, e), lean: lerp(-0.03, 0.13, e), rot: 0, fanAng: lerp(-54, 88, e), fA: Wd, fB: Sw, fk: e, front: e > 0.35, smear: true }; }
+  if (d < 0.24) { const u = (d - 0.1) / 0.14; return { A: Sw, B: null, k: 0, sy: lerp(1.035, 1, easeOut(u)), sx: 1, lean: lerp(0.13, 0.06, easeOut(u)), rot: 0, fanAng: lerp(88, 106, easeOut(u)), fA: Sw, fB: null, fk: 0, front: true, smear: u < 0.55 }; }
+  if (d < 0.38) { const u = smooth((d - 0.24) / 0.14); return { A: Sw, B: Fo, k: u, sy: 1, sx: 1, lean: 0.06 * (1 - u), rot: 0, fanAng: lerp(106, 120, u), fA: Sw, fB: Fo, fk: u, front: true }; }
+  const u = d - 0.38; return { A: Fo, B: null, k: 0, sy: 1 + 0.008 * Math.sin(u * 3), sx: 1, lean: 0, rot: 0, fanAng: 120 + 7 * Math.sin(u * 11) * Math.exp(-u * 3), fA: Fo, fB: null, fk: 0, front: true };
+}
+/** 喜び：ガッツポーズと両手バンザイを交互に、跳ねながら */
+function cheerPose(tc, pA = SAK.fistpump, pB = SAK.victory, amp = 0.2) {
+  const per = 0.52; const n = Math.floor(tc / per), h = (tc - n * per) / per;
+  const cur = (n & 1) ? pB : pA, nxt = (n & 1) ? pA : pB; const k = pA === pB ? 0 : smooth((h - 0.74) / 0.26);
+  const sy = h < 0.14 ? 0.92 + 0.08 * smooth(h / 0.14) : 1 + 0.035 * Math.sin(Math.PI * h);
+  return { A: cur, B: pA === pB ? null : nxt, k, bob: amp * Math.sin(Math.PI * h), sy, sx: 1 + (1 - sy) * 0.6, lean: 0, rot: 0.03 * Math.sin(2 * Math.PI * h),
+    fanAng: lerp(SAK_HAND[cur][2], SAK_HAND[nxt][2], k) + 7 * Math.sin(2 * Math.PI * h), fA: cur, fB: pA === pB ? null : nxt, fk: k };
+}
+function idlePose(t) { const b = Math.sin(t * 2.6); return { A: SAK.idle, B: null, k: 0, sy: 1 + 0.012 * b, sx: 1 - 0.006 * b, lean: 0, rot: 0, bob: 0, fanAng: -18 + 3 * Math.sin(t * 2.6 + 1) }; }
+function finishSak(st, lv, fanLv) {
+  st.lv = lv; st.fanLv = fanLv;
+  const fA = st.fA != null ? st.fA : st.A, fB = st.fA != null ? st.fB : st.B, fk = st.fA != null ? st.fk : st.k;
+  st.fan = fanFor(fA, fB, fk || 0, st.fanAng != null ? st.fanAng : SAK_HAND[st.A][2], st.front);
+  return st;
+}
+/** ヒットストップ中はサクラの時間を止める */
+function animTime(r, t) {
+  if (!r || !r.contacted) return t; const c = r.tapT + CFG.run.swingContactDelaySeconds; const hs = r.flightStart - c;
+  return t < r.flightStart ? Math.min(t, c) : t - hs;
+}
+function sakuraAnim(t) {
+  const r = G.run; const lv = r ? r.costumeLv : save.costumeLv, fanLv = r ? r.fanLv : save.fanLv;
+  if (!r) { const st = idlePose(t); st.x = X0; return finishSak(st, lv, fanLv); }
+  const ta = animTime(r, Math.max(t, r.startT)); let st;
+  if (r.tapT != null && ta >= r.tapT) {
+    const from = runPose(r, r.tapT); const d = ta - r.tapT; st = swingPose(d, from); st.bob = 0;
+    if (st.smear) st.smear = [1, 2, 3, 4, 5].map(j => d - j * 0.009).filter(v => v > 0.045).map(v => swingPose(v, from).fanAng);
+    st.ghost = d >= 0.04 && d < 0.22;
+    if (r.contacted && t - r.flightStart > 0.9) {   // 打った後：振り抜き→ガッツポーズで跳ねる
+      const tc = t - r.flightStart - 0.9; if (tc < 0.16) { const u = smooth(tc / 0.16); st = { A: SAK.follow, B: SAK.fistpump, k: u, sy: 1, sx: 1, lean: 0, rot: 0, bob: 0, fanAng: lerp(120, SAK_HAND[SAK.fistpump][2], u), fA: SAK.follow, fB: SAK.fistpump, fk: u }; }
+      else st = cheerPose(tc - 0.16);
+    } else if (r.miss && d > 0.55) {   // 空振り→待機へ戻る
+      const u = smooth((d - 0.55) / 0.22); const ip = idlePose(t);
+      st = u < 1 ? { A: SAK.follow, B: SAK.idle, k: u, sy: 1, sx: 1, lean: 0, rot: 0, bob: 0, fanAng: lerp(120, -18, u), fA: SAK.follow, fB: SAK.idle, fk: u } : ip;
+    }
+  } else if (G.state === 'miss' && r.miss === 'none') {   // 入力なし：ブレーキで止まってから待機へ
+    const tau = ta - r.contactT; const u = smooth((tau - 0.45) / 0.25);
+    st = { A: SAK.run_b, B: u > 0 ? SAK.idle : null, k: u, sy: 1 + 0.03 * (1 - u) * Math.sin(clamp(tau, 0, 0.3) * 10), sx: 1, lean: -0.1 * (1 - u), rot: -0.05 * (1 - u), bob: 0, fanAng: lerp(-56, -18, u) };
+  } else { st = runPose(r, ta); st.ghost = st.sp > 0.5; }
+  st.x = sakXAt(r, ta);
+  return finishSak(st, lv, fanLv);
+}
+/** 上司の動き */
+function bossAnim(t) {
+  const r = G.run; const base = { wear: 1, A: BOSS.idle, B: null, k: 0, center: false, rot: 0, sx: 1, sy: 1, flip: true, x: 0.1, y: ROOF };
+  if (!r || !r.contacted) {
+    if (!r || G.state === 'ready') { const q = (t % 1.5) / 1.5, k = 0.5 - 0.5 * Math.cos(2 * Math.PI * q); return { ...base, A: BOSS.idle, B: BOSS.brace, k: smooth(k * 1.2), sy: 1 - 0.05 * k, sx: 1 + 0.03 * k }; }   // 準備運動（屈伸）
+    if (G.state === 'miss' && t > (r.missT || 0) + 0.3) { const u = smooth((t - r.missT - 0.3) / 0.25); return { ...base, A: BOSS.brace, B: BOSS.thumbs, k: u, sy: 1 + 0.015 * Math.sin((t - r.missT) * 5) * u }; }
+    return { ...base, A: BOSS.brace, sy: 0.985 + 0.012 * Math.sin(t * 9), sx: 1.01, rot: 0.012 * Math.sin(t * 38) };   // 構えて武者震い
+  }
+  const wear = r.course.bossWear; const tf = t - r.flightStart;
+  if (tf < 0) return { wear, A: BOSS.launch, B: null, k: 0, center: true, rot: -0.22, sx: 0.8, sy: 1.14, flip: false, x: 0, y: ROOF };   // 衝撃でつぶれる瞬間
+  if (tf < r.L.tLand) {
+    const p = posAt(r.L, tf); const vang = Math.atan2(-p.vy, p.vx);
+    const st = { wear, A: BOSS.fly, B: null, k: 0, center: true, flip: false, x: p.x, y: Math.max(0, p.y), sx: 1, sy: 1, rot: 0, ghost: true };
+    if (tf < 0.34) { const u = smooth(tf / 0.34); st.A = BOSS.launch; st.B = BOSS.fly; st.k = smooth((tf - 0.18) / 0.16); st.sx = 1.24 - 0.24 * u; st.sy = 0.85 + 0.15 * u; st.rot = vang * 0.45 * u; }
+    else { const w = Math.sin(tf * 15); st.sx = 1 + 0.045 * w; st.sy = 1 - 0.045 * w; st.rot = clamp(vang * 0.55, -0.6, 0.6) + 0.09 * Math.sin(tf * 11);
+      const tT = r.L.tLand - 0.7; if (tf > tT) { const u = tf - tT; st.B = BOSS.tumble; st.k = smooth(u / 0.15); st.rot += u * 5.5 * st.k; } }
+    return st;
+  }
+  const tl = t - r.landT; const ice = BIOME[r.course.biome].slide; const imp = d => Math.exp(-d * 11) * Math.cos(d * 26);
+  if (ice && tl < 1.1) { const u = clamp(tl / 1.1, 0, 1); const sq = 0.24 * imp(tl); return { wear, A: BOSS.land, B: null, k: 0, center: false, flip: false, x: r.L.dist + 13 * (1 - Math.pow(1 - u, 2)), y: 0, sy: 1 - sq, sx: 1 + sq * 0.8, rot: -0.05 * (1 - u), phase: 'slide' }; }
+  if (!ice && tl < 0.45) { const u = clamp(tl / 0.45, 0, 1); return { wear, A: BOSS.tumble, B: null, k: 0, center: true, flip: false, x: r.L.dist + 3.2 * u, y: 1.5 * Math.sin(Math.PI * u), rot: tl * 7, sx: 1 + 0.08 * Math.sin(tl * 30), sy: 1, phase: 'bounce' }; }
+  const t0 = ice ? 1.1 : 0.45, xs = r.L.dist + (ice ? 13 : 3.2), tk = tl - t0, standAt = ice ? 1.3 : 1.0;
+  if (tl < standAt) { const sq = 0.2 * imp(tk); return { wear, A: BOSS.land, B: null, k: 0, center: false, flip: false, x: xs, y: 0, sy: 1 - sq, sx: 1 + sq * 0.8, rot: 0.03 * Math.sin(tk * 9) * Math.exp(-tk * 2), phase: 'sit' }; }
+  const ts = tl - standAt; const u = smooth(ts / 0.16); const pop = 0.14 * Math.exp(-ts * 8) * Math.cos(ts * 20);   // 起き上がって跳ねる
+  let hop = 0, squash = 0; if (ts > 0.45) { const hp = ((ts - 0.45) % 0.7) / 0.7; if (hp < 0.55) hop = 0.3 * Math.sin(Math.PI * hp / 0.55); else squash = 0.07 * Math.sin(Math.PI * (hp - 0.55) / 0.45); }
+  return { wear, A: BOSS.land, B: WEAR, k: u, center: false, flip: false, x: xs, y: hop, sy: 1 + pop - squash, sx: 1 - pop * 0.6 + squash * 0.8, rot: 0, phase: 'stand' };
+}
+/** 装備アイコン用：フレームを箱に収めて描く */
+function drawFrameFit(canvas, fr, pad = 4, filter) {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const cw = canvas.clientWidth || canvas.width, ch = canvas.clientHeight || canvas.height;
+  canvas.width = Math.round(cw * dpr); canvas.height = Math.round(ch * dpr);
+  const x = canvas.getContext('2d'); x.clearRect(0, 0, canvas.width, canvas.height);
+  if (!fr) { x.setTransform(dpr, 0, 0, dpr, 0, 0); drawMissing(x, 2, 2, cw - 4, ch - 4); return; }
+  const s = Math.min((cw - pad * 2) / fr.w, (ch - pad * 2) / fr.h);
+  x.setTransform(dpr, 0, 0, dpr, 0, 0); if (filter) x.filter = filter;
+  blit(x, fr, (cw - fr.w * s) / 2, ch - pad - fr.h * s, fr.w * s, fr.h * s, s * dpr);
+}
+
+// ---------------------------------------------------------------------
+//  効果音（Web Audioで合成。開始操作の後にだけ有効化）
+// ---------------------------------------------------------------------
+const Sound = {
+  ac: null, master: null, noise: null, wind: null, windGain: null,
+  init() {
+    if (this.ac) { if (this.ac.state === 'suspended') this.ac.resume().catch(() => {}); return; }
+    const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+    try { this.ac = new AC(); } catch (e) { return; }
+    this.master = this.ac.createGain(); this.master.connect(this.ac.destination); this.applyMute();
+    const len = this.ac.sampleRate; const b = this.ac.createBuffer(1, len, this.ac.sampleRate); const d = b.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1; this.noise = b;
+  },
+  applyMute() { if (this.master) this.master.gain.value = (save && save.settings.mute) ? 0 : 0.55; },
+  nz(dur, { type = 'bandpass', f = 1000, f2, q = 1, g = 0.5, at = 0 } = {}) {
+    if (!this.ac) return; const t = this.ac.currentTime + at;
+    const src = this.ac.createBufferSource(); src.buffer = this.noise; src.loop = true;
+    const fl = this.ac.createBiquadFilter(); fl.type = type; fl.frequency.setValueAtTime(f, t); if (f2) fl.frequency.exponentialRampToValueAtTime(f2, t + dur); fl.Q.value = q;
+    const gn = this.ac.createGain(); gn.gain.setValueAtTime(0.0001, t); gn.gain.exponentialRampToValueAtTime(g, t + 0.004); gn.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    src.connect(fl); fl.connect(gn); gn.connect(this.master); src.start(t, Math.random() * 0.5); src.stop(t + dur + 0.05);
+  },
+  tn(f, dur, { type = 'square', f2, g = 0.15, at = 0 } = {}) {
+    if (!this.ac) return; const t = this.ac.currentTime + at;
+    const o = this.ac.createOscillator(); o.type = type; o.frequency.setValueAtTime(f, t); if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + dur);
+    const gn = this.ac.createGain(); gn.gain.setValueAtTime(0.0001, t); gn.gain.exponentialRampToValueAtTime(g, t + 0.005); gn.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(gn); gn.connect(this.master); o.start(t); o.stop(t + dur + 0.05);
+  },
+  step(k = 1) { this.nz(0.055, { type: 'lowpass', f: 520, g: 0.32 * k }); this.tn(110, 0.05, { type: 'sine', f2: 70, g: 0.18 * k }); },
+  harisen(power) { this.nz(0.03, { type: 'highpass', f: 4200, g: 0.7 }); this.nz(0.2, { type: 'bandpass', f: 2600, f2: 900, q: 0.7, g: 0.9 * power }); this.tn(170, 0.14, { type: 'sine', f2: 55, g: 0.45 * power }); },
+  whiff() { this.nz(0.28, { type: 'bandpass', f: 700, f2: 2600, q: 1.4, g: 0.35 }); },
+  land() { this.nz(0.42, { type: 'lowpass', f: 380, f2: 120, g: 0.8 }); this.tn(85, 0.3, { type: 'sine', f2: 38, g: 0.5 }); },
+  coin() { this.tn(988, 0.08, { g: 0.09 }); this.tn(1319, 0.16, { g: 0.09, at: 0.07 }); },
+  click() { this.tn(720, 0.04, { type: 'triangle', g: 0.1 }); },
+  buhi() {
+    if (!this.ac) return; const t = this.ac.currentTime; const o = this.ac.createOscillator(); o.type = 'sawtooth';
+    o.frequency.setValueAtTime(420, t); o.frequency.linearRampToValueAtTime(760, t + 0.12); o.frequency.linearRampToValueAtTime(520, t + 0.5);
+    const lfo = this.ac.createOscillator(); lfo.frequency.value = 28; const lg = this.ac.createGain(); lg.gain.value = 40; lfo.connect(lg); lg.connect(o.frequency);
+    const fl = this.ac.createBiquadFilter(); fl.type = 'lowpass'; fl.frequency.value = 1700;
+    const gn = this.ac.createGain(); gn.gain.setValueAtTime(0.0001, t); gn.gain.exponentialRampToValueAtTime(0.12, t + 0.03); gn.gain.exponentialRampToValueAtTime(0.0001, t + 0.55);
+    o.connect(fl); fl.connect(gn); gn.connect(this.master); o.start(t); lfo.start(t); o.stop(t + 0.6); lfo.stop(t + 0.6);
+  },
+  windOn() {
+    if (!this.ac || this.wind) return; const src = this.ac.createBufferSource(); src.buffer = this.noise; src.loop = true;
+    const fl = this.ac.createBiquadFilter(); fl.type = 'bandpass'; fl.frequency.value = 600; fl.Q.value = 0.6;
+    const g = this.ac.createGain(); g.gain.value = 0; src.connect(fl); fl.connect(g); g.connect(this.master); src.start();
+    this.wind = { src, fl, g };
+  },
+  windSet(v) { if (!this.wind) return; const t = this.ac.currentTime; this.wind.g.gain.setTargetAtTime(clamp(v / 90, 0, 1) * 0.22, t, 0.08); this.wind.fl.frequency.setTargetAtTime(300 + v * 14, t, 0.1); },
+  windOff() { if (!this.wind) return; const w = this.wind; this.wind = null; try { w.g.gain.setTargetAtTime(0, this.ac.currentTime, 0.05); w.src.stop(this.ac.currentTime + 0.3); } catch (e) { /* noop */ } },
+};
+
+// ---------------------------------------------------------------------
+//  セーブ（localStorage＋使える環境ではクラウドの個人領域へ同期）
+// ---------------------------------------------------------------------
+let save = null, saveEnabled = true;
+const Store = {
+  get key() { return CFG.save.key; },
+  read() { try { return localStorage.getItem(this.key); } catch (e) { return null; } },
+  write(s) { try { localStorage.setItem(this.key, s); return true; } catch (e) { return false; } },
+  clear() { try { localStorage.removeItem(this.key); } catch (e) { /* noop */ } },
+};
+function newSave() {
+  let rm = false; try { rm = matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { /* noop */ }
+  return { schemaVersion: CFG.save.schemaVersion, totalXp: 0, coins: 0, fanLv: 1, costumeLv: 1, cleared: [], best: {}, plays: 0,
+    seenOpening: false, tutorialDone: false, settings: { mute: false, reduceMotion: rm }, updatedAt: 0 };
+}
+function validSave(s) {
+  const lvOk = v => Number.isInteger(v) && v >= 1 && v <= CFG.equipmentLevelCap;
+  return !!s && typeof s === 'object' && s.schemaVersion === CFG.save.schemaVersion
+    && Number.isFinite(s.totalXp) && s.totalXp >= 0 && Number.isFinite(s.coins) && s.coins >= 0
+    && lvOk(s.fanLv) && lvOk(s.costumeLv) && Array.isArray(s.cleared) && s.cleared.every(n => Number.isInteger(n) && n >= 1 && n <= CFG.courseCount)
+    && !!s.best && typeof s.best === 'object' && Object.values(s.best).every(v => Number.isFinite(v) && v >= 0);
+}
+function normalizeSave(s) {
+  const b = newSave(); const out = Object.assign(b, s); out.settings = Object.assign(newSave().settings, s.settings || {});
+  out.cleared = [...new Set(out.cleared)].sort((a, b2) => a - b2); return out;
+}
+function persist() {
+  if (!saveEnabled) return; save.updatedAt = Date.now();
+  if (!Store.write(JSON.stringify(save)) && !persist.warned) { persist.warned = true; toast('この環境ではブラウザ保存が使えません。進行はページを閉じると消えます。', 'error'); }
+  Cloud.push();
+}
+const Cloud = {
+  ref: null, state: 'off', busy: false, dirty: false, pending: null,
+  async init() {
+    const [db, user] = await Promise.all([cap('db'), cap('user')]);
+    if (!db || !user) { this.state = 'off'; badge(); return; }
+    let id = null; try { id = await user.id(); } catch (e) { /* noop */ }
+    if (!id) { this.state = 'off'; badge(); return; }
+    try {
+      this.ref = db.doc('data/users/' + id + '/save');
+      const snap = await this.ref.get(); this.state = 'on';
+      const remote = snap.exists ? snap.data()?.save : null;
+      if (remote && validSave(remote) && (remote.updatedAt || 0) > (save.updatedAt || 0)) this.adopt(normalizeSave(JSON.parse(JSON.stringify(remote))));
+      else if (save.updatedAt && (!remote || (remote.updatedAt || 0) < save.updatedAt)) this.push();
+    } catch (e) { this.state = 'off'; }
+    badge();
+  },
+  adopt(s) {
+    if (G.screen === 'play' && G.state !== 'ready') { this.pending = s; return; }
+    save = s; saveEnabled = true; Store.write(JSON.stringify(save)); Sound.applyMute(); refreshAll(); toast('クラウドに保存された進行を読み込みました');
+  },
+  applyPending() { if (this.pending) { const s = this.pending; this.pending = null; this.adopt(s); } },
+  push() { if (!this.ref || this.state !== 'on') return; this.dirty = true; if (!this.busy) this.flush(); },
+  async flush() {
+    this.busy = true;
+    while (this.dirty) {
+      this.dirty = false; const body = { save: JSON.parse(JSON.stringify(save)), build: BUILD_ID };
+      try { await this.ref.set(body); }
+      catch (e) {
+        if (e && e.code === 'unavailable') { await sleep(700 + Math.random() * 900); try { await this.ref.set(body); } catch (e2) { /* noop */ } }
+        else { this.state = 'readonly'; badge(); break; }
+      }
+    }
+    this.busy = false;
+  },
+};
+function badge() {
+  const el = $('#cloud-badge'); if (!el) return;
+  el.textContent = Cloud.state === 'on' ? '進行はクラウドにも保存中' : Cloud.state === 'readonly' ? '進行はこの端末にだけ保存' : 'セーブ：この端末のブラウザ';
+}
+
+// ---------------------------------------------------------------------
+//  ルール（設定JSONの式をそのまま実装）
+// ---------------------------------------------------------------------
+function playerLevelFor(xp) { let lv = 0; CFG.playerXpThresholds.forEach(t => { if (xp >= t) lv++; }); return clamp(lv, 1, CFG.playerLevelCap); }
+function playerLevel() { return playerLevelFor(save.totalXp); }
+function equipCap() { return CFG.equipmentCapByPlayerLevel[playerLevel() - 1]; }
+function upgradeCost(L) { return CFG.economy.upgradeBaseCost + CFG.economy.upgradeCostPerExistingLevel * (L - 1); }
+function runDuration(costumeLv) { return CFG.run.baseDurationSeconds - CFG.run.durationDecreasePerCostumeLevel * (costumeLv - 1); }
+function isUnlocked(c) { return c.id === 1 || (save.cleared.includes(c.id - 1) && playerLevel() >= c.requiredPlayerLevel); }
+function lockReason(c) {
+  const r = []; if (!save.cleared.includes(c.id - 1)) r.push(`COURSE ${c.id - 1}をクリア`);
+  if (playerLevel() < c.requiredPlayerLevel) r.push(`PLAYER Lv.${c.requiredPlayerLevel}`); return r.join('＋') + 'で解放';
+}
+/** e = |(tapTime + 0.10) − 予測接触時刻|。上の判定から順に、各区間の上限を含む */
+function judgeTap(tapT, contactT, practice) {
+  const delay = CFG.run.swingContactDelaySeconds; const signed = (tapT + delay) - contactT; const e = Math.abs(signed); const k = practice ? 1.5 : 1;
+  for (const j of CFG.timing) if (e <= j.maxAbsErrorSeconds * k + 1e-9) return { label: j.label, mult: j.powerMultiplier, e, signed };
+  return { label: 'MISS', mult: 0, e, signed };
+}
+function computeLaunch(mult, fanLv, costumeLv, pLv, course) {
+  const P = CFG.physics;
+  const vBase = P.baseSpeedMetersPerSecond + P.fanSpeedPerLevel * (fanLv - 1) + P.costumeSpeedPerLevel * (costumeLv - 1) + P.playerSpeedPerLevel * (pLv - 1);
+  const v = vBase * mult, a = P.launchAngleDegrees * DEG; const vx = v * Math.cos(a), vy = v * Math.sin(a);
+  const g = course.gravity, w = course.windAcceleration, h = P.launchHeightMeters;
+  const tLand = Math.min(P.maxSimulationSeconds, (vy + Math.sqrt(vy * vy + 2 * g * h)) / g);   // 最初に y=0 となる正の時刻
+  const dist = vx * tLand + 0.5 * w * tLand * tLand;                                            // 第一接地点のxだけを記録
+  return { vBase, v, vx, vy, g, w, h, tLand, dist };
+}
+function posAt(L, t) { return { x: L.vx * t + 0.5 * L.w * t * t, y: L.h + L.vy * t - 0.5 * L.g * t * t, vx: L.vx + L.w * t, vy: L.vy - L.g * t }; }
+function stressRelief(d, c) { return Math.min(100, Math.floor(100 * d / (1.3 * c.targetMeters))); }
+function grantRewards(c, r) {
+  const E = CFG.economy, hit = !r.miss, d = hit ? r.L.dist : 0;
+  const before = { lv: playerLevel(), unlocked: CFG.courses.filter(isUnlocked).map(x => x.id) };
+  let xp = hit ? E.hitBaseXp + Math.floor(d / E.metersPerBonusXp) : E.missXp;
+  let coins = hit ? E.hitBaseCoins + Math.floor(d * E.coinsPerMeter) : E.missCoins;
+  const clear = hit && d >= c.targetMeters;
+  const firstClear = clear && !save.cleared.includes(c.id);
+  if (firstClear) { xp += E.firstClearXp; coins += E.firstClearCoins; save.cleared.push(c.id); save.cleared.sort((a, b) => a - b); }
+  const prevBest = save.best[c.id] || 0; const newBest = hit && d > prevBest; if (newBest) save.best[c.id] = d;
+  save.totalXp += xp; save.coins += coins; save.plays++;
+  persist();   // クリア記録と初回ボーナスを同時に保存（再読み込みで重複しない）
+  const after = { lv: playerLevel(), unlocked: CFG.courses.filter(isUnlocked).map(x => x.id) };
+  return { xp, coins, clear, firstClear, newBest, prevBest, lvUp: after.lv > before.lv ? after.lv : 0,
+    newUnlocks: after.unlocked.filter(id => !before.unlocked.includes(id)), allClear: firstClear && save.cleared.length === CFG.courseCount };
+}
+
+// ---------------------------------------------------------------------
+//  ゲーム時刻（単調増加。一時停止中は進まない）
+// ---------------------------------------------------------------------
+const Clock = {
+  pausedTotal: 0, pausedAt: null, virtual: null,
+  real() { return this.virtual != null ? this.virtual : performance.now(); },
+  now() { const r = this.pausedAt != null ? this.pausedAt : this.real(); return (r - this.pausedTotal) / 1000; },
+  fromEvent(ts) {
+    if (this.virtual != null) return (ts - this.pausedTotal) / 1000;
+    const pn = performance.now(); let r = (typeof ts === 'number' && ts > 0) ? ts : pn;
+    if (r > pn + 50 || r < pn - 1000) r = pn;
+    return (r - this.pausedTotal) / 1000;
+  },
+  pause() { if (this.pausedAt == null) this.pausedAt = this.real(); },
+  resume() { if (this.pausedAt != null) { this.pausedTotal += this.real() - this.pausedAt; this.pausedAt = null; } },
+};
+
+// ---------------------------------------------------------------------
+//  プレイ画面
+// ---------------------------------------------------------------------
+const W = 640; let VH = 360, DPR = 1, SCALE = 1;
+const X0 = -6.4, XC = -1.75, XSTOP = -1.25, RUNP = 1.6, EDGE = 0.9;   // 助走開始・接触・停止位置（m）
+let ROOF = 18;
+const G = {
+  screen: 'boot', state: 'idle', course: null, practice: false, run: null, ready: false, paused: false,
+  cam: { x: 0, y: 18, z: 52 }, shake: { t: 0, d: 0, a: 0 }, parts: [], fx: [], pops: [], amb: [], lines: [],
+  equipReturn: 'title', lastStep: 0, hudCache: {},
+};
+const canvas = () => $('#game');
+let pctx = null;
+function rm() { return !!save?.settings.reduceMotion; }
+
+function layoutPlay() {
+  const scr = $('#scr-play'); if (scr.hidden) return;
+  const vw = scr.clientWidth, vh = scr.clientHeight; const land = vw > vh * 1.05; scr.classList.toggle('land', land);
+  const stage = $('#stage'), cv = canvas(); let cw, ch;
+  if (land) {
+    stage.style.height = ''; VH = clamp(Math.round(640 * vh / vw), 280, 480); cw = vw; ch = cw * VH / 640;
+    if (ch > vh) { ch = vh; cw = ch * 640 / VH; }
+  } else {
+    const top = $('#scr-play .topbar').offsetHeight; const avail = Math.max(170, vh - top - 300);
+    cw = vw; VH = clamp(Math.round(640 * avail / cw), 300, 600); ch = cw * VH / 640; stage.style.height = ch + 'px';
+  }
+  DPR = Math.min(window.devicePixelRatio || 1, 2); SCALE = cw / 640;
+  cv.style.width = cw + 'px'; cv.style.height = ch + 'px'; cv.width = Math.round(cw * DPR); cv.height = Math.round(ch * DPR);
+  pctx = cv.getContext('2d');
+  const tc = $('#timing'); tc.width = Math.round(tc.clientWidth * DPR); tc.height = Math.round(tc.clientHeight * DPR);
+  initAmbient();
+}
+function sx(x) { return W / 2 + (x - G.cam.x) * G.cam.z; }
+function sy(y) { return VH / 2 - (y - G.cam.y) * G.cam.z; }
+function charScale() { return Math.max(G.cam.z * M_PER_PX, clamp(0.13 / SCALE, 0.17, 0.27)); }
+
+async function enterReady(courseId, practice) {
+  const c = courseById(courseId); G.course = c; G.practice = !!practice; G.bestAtStart = save.best[c.id] || 0; G.state = 'ready'; G.run = null; G.ready = false;
+  G.parts.length = 0; G.fx.length = 0; G.pops.length = 0; G.lines.length = 0; G.paused = false; Clock.resume();
+  ROOF = CFG.physics.launchHeightMeters;
+  $('#ov-result').hidden = true; $('#ov-pause').hidden = true; $('#countdown').hidden = true;
+  show('play'); layoutPlay(); setHudStatic(); setAction('ready');
+  const cam = runCam(0); Object.assign(G.cam, cam);
+  await Promise.all([loadImg('bg_' + c.biome), loadImg('sakura_poses'), loadImg('boss_poses'), loadImg('harisen'), loadImg('mask_sakura'), loadImg('mask_boss'), loadImg('boss_wear')]);
+  sakuraFrames(save.costumeLv); bossFrames(c.bossWear); atlasFrames('harisen'); atlasFrames('boss_wear');
+  if (G.course !== c) return;
+  G.ready = true; setAction('ready');
+  G.pops.push({ kind: 'bubble', who: 'boss', text: 'どーんと来い！', t0: Clock.now(), dur: 2.6 });
+  hint(!save.tutorialDone && c.id === 1 ? 'チュートリアル：「走り出す」で助走 → 足もとの輪が ◆ に重なった瞬間に「たたく」！' : '輪が ◆ に重なった瞬間に「たたく」');
+}
+function hint(t) { $('#hud-hint').textContent = t || ''; }
+function setHudStatic() {
+  const c = G.course;
+  $('#pl-no').textContent = `WORLD ${c.world}/${CFG.worldCount} · COURSE ${c.id}/${CFG.courseCount}`;
+  $('#pl-name').textContent = courseShort(c); $('#pl-lv').textContent = 'Lv.' + playerLevel();
+  $('#hud-target').textContent = c.targetMeters;
+  const best = save.best[c.id]; $('#hud-best').textContent = best ? fmt1(best) + ' m' : '—';
+  const tags = [];
+  tags.push(`<span class="chip">${envLabel(c)}</span>`);
+  tags.push(`<span class="chip">ハリセン <b>Lv.${save.fanLv}</b></span><span class="chip">衣装 <b>Lv.${save.costumeLv}</b></span>`);
+  if (G.practice) tags.push('<span class="chip tag-practice">練習モード</span>');
+  $('#hud-tags').innerHTML = tags.join('');
+  G.hudCache = {}; updateHud(0);
+}
+function progressMax() { const c = G.course; return Math.max(c.targetMeters * 1.4, (G.bestAtStart || 0) * 1.1); }
+function updateHud(dist) {
+  const txt = fmt1(dist); if (G.hudCache.d !== txt) { G.hudCache.d = txt; $('#hud-dist').innerHTML = `${txt}<small>m</small>`; }
+  const mx = progressMax(); const c = G.course;
+  const pf = clamp(dist / mx, 0, 1); if (G.hudCache.p !== pf) { G.hudCache.p = pf; $('#prog-fill').style.width = (pf * 100) + '%'; $('#prog-fill').style.background = dist >= c.targetMeters ? 'linear-gradient(90deg,#8DCEEF,#EACB59)' : ''; }
+  $('#prog-flag').style.left = (c.targetMeters / mx * 100) + '%';
+  const b = G.bestAtStart; const pb = $('#prog-best'); pb.hidden = !b; if (b) pb.style.left = (b / mx * 100) + '%';
+}
+function setAction(mode) {
+  const b = $('#btn-action'); b.className = 'action';
+  if (mode === 'ready') { b.textContent = G.ready ? '走り出す' : '準備中…'; b.disabled = !G.ready; }
+  else if (mode === 'run') { b.textContent = 'たたく！'; b.classList.add('run'); b.disabled = false; }
+  else { b.textContent = mode === 'flight' ? 'ぶっとべー！' : '……'; b.classList.add('wait'); b.disabled = false; }
+}
+
+// ---- 入力 ----
+function onAction(ts) {
+  if (G.paused || G.screen !== 'play') return;
+  Sound.init();
+  if (G.state === 'ready') startRun(ts); else if (G.state === 'run') tryHit(ts);
+}
+function startRun(ts) {
+  if (!G.ready || G.state !== 'ready') return;
+  const t = Clock.fromEvent(ts), c = G.course, T = runDuration(save.costumeLv), delay = CFG.run.swingContactDelaySeconds;
+  const graze = CFG.timing[CFG.timing.length - 1].maxAbsErrorSeconds * (G.practice ? 1.5 : 1);
+  G.run = { startT: t, T, contactT: t + T, idealTapT: t + T - delay, deadline: t + T - delay + graze, guardUntil: t + 0.3,
+    tapT: null, judge: null, miss: null, L: null, contacted: false, flightStart: null, landT: null, done: false, reward: null,
+    practice: G.practice, fanLv: save.fanLv, costumeLv: save.costumeLv, pLv: playerLevel(), stepIdx: -1, course: c, buhi2: false };
+  G.run.aimX = sakXAt(G.run, G.run.idealTapT);
+  G.state = 'run'; setAction('run'); hint('');
+  G.pops = G.pops.filter(p => p.who !== 'boss');
+}
+function tryHit(ts) {
+  const r = G.run; if (G.state !== 'run' || !r || r.tapT != null) return;   // 一度押したら結果まで再入力を無視
+  const t = Clock.fromEvent(ts); if (t < r.guardUntil) return;               // 「走り出す」直後の二度押しは無視
+  r.tapT = t; const j = judgeTap(t, r.contactT, r.practice); r.judge = j;
+  if (j.label === 'MISS') { r.miss = j.signed < 0 ? 'early' : 'late'; Sound.whiff(); }
+  else r.L = computeLaunch(j.mult, r.fanLv, r.costumeLv, r.pLv, r.course);
+  G.state = 'swing'; setAction('wait');
+}
+function sakXAt(r, t) {
+  const u = (t - r.startT) / r.T;
+  if (u <= 0) return X0; if (u < 1) return X0 + (XC - X0) * Math.pow(u, RUNP);
+  const tau = (u - 1) * r.T, vEnd = RUNP * (XC - X0) / r.T, dec = vEnd * vEnd / (2 * (XSTOP - XC)), tStop = vEnd / dec, tt = Math.min(tau, tStop);
+  return XC + vEnd * tt - 0.5 * dec * tt * tt;
+}
+
+// ---- 進行（固定刻み） ----
+function step(dt) {
+  const t = Clock.now(), r = G.run;
+  if (G.state === 'run' && r) {
+    if (r.tapT == null && t > r.deadline + 0.05) { r.miss = 'none'; r.missT = t; G.state = 'miss'; setAction('wait'); G.pops.push({ kind: 'bubble', who: 'sakura', text: 'あれ？', t0: t, dur: 1.4 }); G.pops.push({ kind: 'bubble', who: 'boss', text: '……？', t0: t + 0.2, dur: 1.2 }); }
+  }
+  if (r && (G.state === 'run' || G.state === 'swing' || G.state === 'miss')) {   // 足音（速くなる）
+    const x = sakXAt(r, Math.max(t, r.startT)); const idx = Math.floor((x - X0) / 0.48);
+    if (idx !== r.stepIdx && t < r.contactT + 0.2) { r.stepIdx = idx; if (idx >= 0) { Sound.step(0.7 + 0.3 * clamp((t - r.startT) / r.T, 0, 1)); puff(x - 0.2, ROOF, 2); } }
+  }
+  if (G.state === 'swing' && r) {
+    if (!r.miss && !r.contacted && t >= r.tapT + CFG.run.swingContactDelaySeconds) contact(r.tapT + CFG.run.swingContactDelaySeconds);
+    else if (r.miss && t > r.tapT + 0.9) { r.missT = t; G.state = 'miss'; G.pops.push({ kind: 'onom', text: 'スカッ…', x: sakXAt(r, t) + 1.2, y: ROOF + 1.8, t0: t, dur: 1 }); G.pops.push({ kind: 'bubble', who: 'boss', text: 'おや？', t0: t, dur: 1.2 }); }
+  }
+  if (G.state === 'flight' && r) {
+    const tf = t - r.flightStart;
+    if (tf >= r.L.tLand) land();
+    else if (tf > 0) {
+      const p = posAt(r.L, tf); Sound.windSet(Math.hypot(p.vx, p.vy));
+      if (!r.buhi2 && tf > r.L.vy / r.L.g - 0.25 && r.L.tLand > 6) { r.buhi2 = true; G.pops.push({ kind: 'bubble', who: 'boss', text: 'ぶひーーっ！！', t0: t, dur: 1.2 }); Sound.buhi(); }
+      if (Math.random() < dt * 20) G.parts.push({ kind: 'trail', x: p.x - 0.4, y: p.y + 0.5, vx: 0, vy: 0, life: 0, max: 0.5, size: 4 });
+      if (!rm() && Math.hypot(p.vx, p.vy) > 18 && Math.random() < dt * 30) G.lines.push({ x: W + 20, y: Math.random() * VH, len: 30 + Math.random() * 60, v: 900 + Math.random() * 600, life: 0.5 });
+    }
+  }
+  if (G.state === 'miss' && t > r.missT + 1.1 && !r.done) { finishRun(); showResult(); }
+  if (G.state === 'land' && t > r.landT + 1.9 && !r.shown) { r.shown = true; showResult(); }
+  updateCamera(dt, t); updateParts(dt);
+}
+function contact(tc) {
+  const r = G.run; r.contacted = true; const j = r.judge.label;
+  const stop = { PERFECT: 0.06, GREAT: 0.045, GOOD: 0.03, GRAZE: 0.015 }[j] || 0;   // ヒットストップ（最大60ms）
+  r.flightStart = tc + stop; G.state = 'flight'; setAction('flight');
+  const power = r.judge.mult;
+  Sound.harisen(power); setTimeout(() => Sound.buhi(), 180); Sound.windOn();
+  if (!rm()) { G.shake = { t: 0.13, d: 0.13, a: { PERFECT: 5, GREAT: 3.5, GOOD: 2.5, GRAZE: 1.5 }[j] }; }
+  G.fx.push({ kind: 'radial', x: -0.3, y: ROOF + 1.1, t0: tc, dur: 0.16, n: rm() ? 6 : 14 });
+  const pal = CFG.equipmentPalette[r.fanLv - 1]; const rnd = Math.random;
+  for (let i = 0; i < (rm() ? 6 : 16); i++) G.parts.push({ kind: 'paper', x: -0.2, y: ROOF + 1.1, vx: 2 + rnd() * 9, vy: 2 + rnd() * 8, life: 0, max: 0.9 + rnd() * 0.6, size: 4 + rnd() * 4, rot: rnd() * 6, vr: (rnd() - 0.5) * 18, color: rnd() < 0.5 ? '#fff8fc' : pal });
+  G.pops.push({ kind: 'judge', text: j + '!', t0: tc, dur: 1.1 });
+  G.pops.push({ kind: 'onom', text: 'パァン！', x: 0.6, y: ROOF + 2.4, t0: tc, dur: 0.7 });
+  G.pops.push({ kind: 'bubble', who: 'boss', text: 'ぶひー！', t0: tc + 0.15, dur: 1.5 });
+}
+function land() {
+  const r = G.run; r.landT = r.flightStart + r.L.tLand; G.state = 'land'; Sound.windOff(); Sound.land();
+  const b = BIOME[r.course.biome];
+  for (let i = 0; i < (rm() ? 8 : 22); i++) { const a = Math.random() * Math.PI; G.parts.push({ kind: 'dust', x: r.L.dist + (Math.random() - 0.5), y: 0.1, vx: Math.cos(a) * (2 + Math.random() * 7), vy: Math.sin(a) * (1 + Math.random() * 4), life: 0, max: 0.7 + Math.random() * 0.6, size: 6 + Math.random() * 10, color: b.dust }); }
+  if (!rm()) G.shake = { t: 0.12, d: 0.12, a: 3 };
+  G.pops.push({ kind: 'onom', text: 'ドスーン！', x: r.L.dist + 0.5, y: 3.2, t0: r.landT, dur: 0.9 });
+  finishRun();
+  setAction('wait');
+}
+function finishRun() {
+  const r = G.run; if (!r || r.done) return; r.done = true;
+  r.reward = r.practice ? null : grantRewards(r.course, r);
+  if (!r.practice && !save.tutorialDone) { save.tutorialDone = true; persist(); }
+}
+
+// ---- カメラ ----
+function runCam(u) {
+  const k = ease(clamp(u, 0, 1)); const land = $('#scr-play').classList.contains('land'); const f = land ? clamp(VH / 430, 0.62, 1) : 1;
+  const z = lerp(62, 70, k) * f; const edgeFrac = land ? lerp(0.66, 0.62, k) : lerp(0.74, 0.68, k); const roofFrac = land ? 0.62 : VH > 420 ? 0.70 : 0.80;
+  return { z, x: -(edgeFrac * W - W / 2) / z, y: ROOF + (roofFrac * VH - VH / 2) / z };
+}
+function bossVisual(t) {
+  const r = G.run; if (!r || !r.contacted) return null;
+  const tf = Math.max(0, t - r.flightStart);
+  if (G.state === 'flight' || tf < r.L.tLand) { const p = posAt(r.L, Math.min(tf, r.L.tLand)); return { x: p.x, y: Math.max(0, p.y), vx: p.vx, vy: p.vy, phase: 'fly', tf }; }
+  const tl = t - r.landT; const ice = BIOME[r.course.biome].slide;
+  if (ice) { const u = clamp(tl / 1.1, 0, 1); return { x: r.L.dist + 13 * (1 - Math.pow(1 - u, 2)), y: 0, vx: 0, vy: 0, phase: tl < 1.1 ? 'slide' : 'stand', tl }; }
+  const u = clamp(tl / 0.45, 0, 1); return { x: r.L.dist + 3.2 * u, y: tl < 0.45 ? 1.5 * Math.sin(Math.PI * u) : 0, vx: 0, vy: 0, phase: tl < 0.45 ? 'bounce' : tl < 1.0 ? 'sit' : 'stand', tl };
+}
+function updateCamera(dt, t) {
+  const r = G.run; let tg;
+  if (!r || G.state === 'ready') tg = runCam(0);
+  else if (G.state === 'run' || G.state === 'miss' || (G.state === 'swing' && !r.contacted)) tg = runCam((t - r.startT) / r.T);
+  else {
+    const b = bossVisual(t); const tf = t - r.flightStart;
+    if (G.state === 'flight' && tf < 0.55) {
+      const sxp = sakXAt(r, t); const w = Math.max(6, b.x - sxp + 5), h = Math.max(4, b.y - ROOF + 5);
+      const z = clamp(Math.min(W * 0.62 / w, VH * 0.62 / h), 8, 60); tg = { z, x: (sxp + b.x) / 2 + 0.8, y: Math.max((ROOF + b.y) / 2 + 0.6, (VH / 2 - 60) / z) };
+    } else if (G.state === 'flight') {
+      const z = clamp(VH * 0.42 / (b.y + 8), 3.0, 14); tg = { z, x: b.x + W * 0.13 / z, y: Math.max(b.y + 0.8, (VH / 2 - 64) / z) };
+    } else { const z = 15; tg = { z, x: b.x + 1.2, y: (VH / 2 - 74) / z }; }
+  }
+  const intro = G.state === 'flight' && r && t - r.flightStart < 0.7;
+  const kz = 1 - Math.exp(-dt * (intro ? 11 : G.state === 'flight' ? 3.2 : 6)), kp = 1 - Math.exp(-dt * (intro ? 16 : G.state === 'flight' ? 9 : 10));
+  const ox = G.cam.x, oy = G.cam.y, oz = G.cam.z;
+  G.cam.z += (tg.z - G.cam.z) * kz; G.cam.x += (tg.x - G.cam.x) * kp; G.cam.y += (tg.y - G.cam.y) * kp;
+  const dxp = (G.cam.x - ox) * G.cam.z, dyp = (G.cam.y - oy) * G.cam.z;
+  for (const a of G.amb) { a.x -= dxp * a.p; a.y += dyp * a.p; }
+  void oz;
+  if (G.shake.t > 0) G.shake.t = Math.max(0, G.shake.t - dt);
+}
+// ---- 粒子 ----
+function puff(x, y, n) { for (let i = 0; i < n; i++) G.parts.push({ kind: 'puff', x, y: y + 0.05, vx: -1 - Math.random() * 2, vy: 0.5 + Math.random(), life: 0, max: 0.35 + Math.random() * 0.2, size: 3 + Math.random() * 3 }); }
+function updateParts(dt) {
+  for (const p of G.parts) {
+    p.life += dt; p.x += p.vx * dt; p.y += p.vy * dt;
+    if (p.kind === 'paper') { p.vy -= 14 * dt; p.vx *= 0.985; p.rot += p.vr * dt; }
+    else if (p.kind === 'dust') { p.vx *= 0.93; p.vy *= 0.93; }
+  }
+  G.parts = G.parts.filter(p => p.life < p.max);
+  for (const l of G.lines) { l.x -= l.v * dt; l.life -= dt; } G.lines = G.lines.filter(l => l.life > 0 && l.x + l.len > -10);
+  const t = performance.now() / 1000;
+  for (const a of G.amb) {
+    if (a.kind === 'snow') { a.y += 22 * dt * a.s; a.x += Math.sin(t + a.ph) * 8 * dt; }
+    else if (a.kind === 'ember') { a.y -= 26 * dt * a.s; a.x += Math.sin(t * 2 + a.ph) * 10 * dt; }
+    else if (a.kind === 'leaf') { a.y += 14 * dt * a.s; a.x -= 10 * dt; }
+    if (a.x < -20) a.x += W + 40; if (a.x > W + 20) a.x -= W + 40; if (a.y < -20) a.y += VH + 40; if (a.y > VH + 20) a.y -= VH + 40;
+  }
+}
+function initAmbient() {
+  const c = G.course; if (!c) return; const b = BIOME[c.biome]; const n = Math.round((rm() ? 14 : 34) * (COURSE_FX[c.id]?.dens || 1));
+  const rnd = mulberry32(c.id * 71); G.amb = [];
+  for (let i = 0; i < n; i++) G.amb.push({ kind: b.amb, x: rnd() * W, y: rnd() * VH, p: 0.15 + rnd() * 0.45, s: 0.6 + rnd() * 0.8, ph: rnd() * 6.28, size: 1 + rnd() * 2.2 });
+}
+
+// ---- 描画 ----
+function renderPlay() {
+  const ctx = pctx; if (!ctx || !G.course) return; const c = G.course, b = BIOME[c.biome]; const t = Clock.now(); const r = G.run;
+  ctx.setTransform(DPR * SCALE, 0, 0, DPR * SCALE, 0, 0); ctx.clearRect(0, 0, W, VH);
+  let shx = 0, shy = 0; if (G.shake.t > 0) { const k = G.shake.t / G.shake.d; shx = (Math.random() - 0.5) * 2 * G.shake.a * k; shy = (Math.random() - 0.5) * 2 * G.shake.a * k; }
+  ctx.save(); ctx.translate(shx, shy);
+  drawBackdrop(ctx, c, b); drawAmbient(ctx, b); drawGround(ctx, c, b); drawBuilding(ctx, b, t);
+  const devS = charScale() * DPR * SCALE, s = charScale();
+  // 狙いマーカー（予測接触の100ms手前に置く）
+  if ((G.state === 'ready' || G.state === 'run') && G.ready) drawAim(ctx, t);
+  // 上司
+  const bv = bossVisual(t);
+  drawBossPlay(ctx, t, s, devS);
+  // サクラ
+  if (r || G.state === 'ready') drawRunner(ctx, t, s, devS);
+  drawParts(ctx);
+  drawFx(ctx, t);
+  if (COURSE_FX[c.id]?.tint) { ctx.fillStyle = COURSE_FX[c.id].tint; ctx.fillRect(-10, -10, W + 20, VH + 20); }
+  ctx.restore();
+  drawLines(ctx);
+  drawPops(ctx, t, bv);
+  if (bv && G.state === 'flight') drawIndicators(ctx, bv);
+  if (!G.ready) { ctx.fillStyle = '#0009'; ctx.fillRect(0, 0, W, VH); ctx.fillStyle = '#fff'; ctx.font = '700 16px system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.fillText('読み込み中…', W / 2, VH / 2); }
+  // HUD
+  let d = 0; if (bv) d = (G.state === 'flight') ? Math.max(0, bv.x) : r.L.dist; updateHud(d);
+  drawTiming(t);
+}
+function drawBackdrop(ctx, c, b) {
+  const im = IMG['bg_' + c.biome];
+  const s = Math.max(W * 1.25 / 1536, VH * 1.3 / 1024), bw = 1536 * s, bh = 1024 * s;
+  // 背景自身の地面は、コードで描く地面と同じ高さに置く。地面が画面外なら背景の地面も画面外に保つ
+  const gS = sy(0), lim = VH + 12; const gImg = gS <= lim ? gS : lim + (gS - lim) * 0.12;
+  let top = gImg - (b.gl / 1024) * bh; top = Math.min(top, VH * 0.55);
+  const left = -Math.min(bw - W, Math.max(0, (G.cam.x + 8) * 0.35));
+  if (!im) { ctx.fillStyle = '#2B2344'; ctx.fillRect(0, 0, W, VH); drawMissing(ctx, 20, 20, W - 40, VH - 40, `背景画像なし: ${c.biome}`); return; }
+  if (top > 0) { ctx.fillStyle = skyColor(c.biome); ctx.fillRect(0, 0, W, top + 2); }
+  ctx.imageSmoothingEnabled = true; ctx.drawImage(im, left, top, bw, bh);
+  G._bg = { s, top, left, bw, bh };
+}
+const SKY = { neon: '#010b47', coast: '#4284d8', jungle: '#56c3f0', ice: '#5f7ce5', magma: '#471528' };
+function skyColor(k) { return SKY[k]; }
+function drawGround(ctx, c, b) {
+  const g = sy(0); if (g > VH + 2) return; const im = IMG['bg_' + c.biome]; const s = G._bg ? G._bg.s : 0.5;
+  const srcY = b.gl - 4, srcH = 1024 - srcY, srcX = 300, srcW = 1236; const tw = srcW * s, th = srcH * s; const X0s = sx(0);
+  if (im) {
+    const k0 = Math.floor((0 - X0s) / tw) - 1, k1 = Math.floor((W - X0s) / tw) + 1;
+    for (let k = k0; k <= k1; k++) {
+      const x = X0s + k * tw; ctx.save();
+      if (k & 1) { ctx.translate(x + tw, g); ctx.scale(-1, 1); ctx.drawImage(im, srcX, srcY, srcW, srcH, 0, 0, tw + 0.5, th); }
+      else ctx.drawImage(im, srcX, srcY, srcW, srcH, x, g, tw + 0.5, th);
+      ctx.restore();
+    }
+    if (g + th < VH) { ctx.fillStyle = '#0d0b18'; ctx.fillRect(0, g + th - 1, W, VH - g - th + 2); }
+  } else { ctx.fillStyle = '#3a3150'; ctx.fillRect(0, g, W, VH - g); }
+  // 距離目盛り・目標・ベスト
+  const z = G.cam.z; const step = z > 6 ? 10 : 50; const x0 = Math.max(0, Math.floor((G.cam.x - W / 2 / z) / step) * step), x1 = G.cam.x + W / 2 / z;
+  ctx.font = '700 10px "Martian Mono", ui-monospace, monospace'; ctx.textAlign = 'center';
+  for (let x = x0; x <= x1; x += step) {
+    if (x <= 0) continue; const X = sx(x); const major = x % 50 === 0;
+    ctx.fillStyle = major ? '#fff8fccc' : '#fff8fc66'; ctx.fillRect(X - 1, g - (major ? 10 : 5), 2, major ? 10 : 5);
+    if (major && (z > 2.2 || x % 100 === 0)) { ctx.fillStyle = '#17162Cb0'; ctx.fillRect(X - 19, g - 26, 38, 14); ctx.fillStyle = '#fff8fc'; ctx.fillText(x + 'm', X, g - 15.5); }
+  }
+  const tgt = c.targetMeters; drawFlag(ctx, sx(tgt), g, '#F48AB4', `目標 ${tgt}m`);
+  const best = G.bestAtStart; if (best) drawFlag(ctx, sx(best), g, '#8DCEEF', `ベスト ${fmt1(best)}m`, true);
+  const r = G.run; if (r && r.landT != null) { const X = sx(r.L.dist); ctx.fillStyle = '#EACB59'; ctx.beginPath(); ctx.moveTo(X, g - 2); ctx.lineTo(X - 7, g - 14); ctx.lineTo(X + 7, g - 14); ctx.fill();
+    ctx.font = '700 12px "Martian Mono", ui-monospace, monospace'; const label = fmt1(r.L.dist) + 'm'; const w = ctx.measureText(label).width + 12; ctx.fillStyle = '#17162Cd0'; ctx.fillRect(X - w / 2, g - 34, w, 18); ctx.fillStyle = '#EACB59'; ctx.fillText(label, X, g - 21); }
+}
+function drawFlag(ctx, X, g, col, label, low) {
+  if (X < -60 || X > W + 60) return; const h = low ? 30 : 46;
+  ctx.fillStyle = '#fff8fc'; ctx.fillRect(X - 1, g - h, 2, h); ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(X + 1, g - h); ctx.lineTo(X + 22, g - h + 6); ctx.lineTo(X + 1, g - h + 12); ctx.fill();
+  ctx.font = '700 10px system-ui, sans-serif'; ctx.textAlign = 'left'; const w = ctx.measureText(label).width + 8;
+  ctx.fillStyle = '#17162Cc8'; ctx.fillRect(X + 3, g - h - 16, w, 14); ctx.fillStyle = col; ctx.fillText(label, X + 7, g - h - 5.5); ctx.textAlign = 'center';
+}
+function drawBuilding(ctx, b, t) {
+  const L = sx(-80), R = sx(EDGE), top = sy(ROOF), bot = sy(0); if (R < -5 || top > VH + 5) return;
+  const z = G.cam.z; const yb = Math.min(bot, VH + 5);
+  ctx.fillStyle = b.wall; ctx.fillRect(L, top, R - L, yb - top);
+  // 窓（ワールド座標で並べるのでカメラと一緒に流れる）
+  const fw = 1.15, fh = 1.7; const xs = Math.floor((G.cam.x - W / 2 / z) / fw) - 1, xe = Math.ceil(Math.min(EDGE, G.cam.x + W / 2 / z) / fw);
+  for (let i = xs; i <= xe; i++) for (let f = 1; f <= 10; f++) {
+    const wx = i * fw + 0.3, wy = ROOF - f * fh + 0.35; if (wx + 0.55 > EDGE - 0.2) continue;
+    const X = sx(wx), Y = sy(wy + 0.8); if (Y > VH || Y + 0.8 * z < 0) continue;
+    const lit = ((i * 7 + f * 13) % 7) < 3; ctx.fillStyle = lit ? b.win[(i * 3 + f) % 3] : b.wall2; ctx.globalAlpha = lit ? 0.55 : 1; ctx.fillRect(X, Y, 0.55 * z, 0.8 * z); ctx.globalAlpha = 1;
+  }
+  // 屋上の床・縁
+  const slab = Math.max(5, 0.32 * z); ctx.fillStyle = b.top; ctx.fillRect(L, top, R - L, slab); ctx.fillStyle = '#0005'; ctx.fillRect(L, top + slab, R - L, Math.max(2, 0.08 * z));
+  ctx.fillStyle = '#0003'; for (let x = Math.floor(G.cam.x - W / 2 / z); x < EDGE; x += 1) { const X = sx(x); if (X > L && X < R) ctx.fillRect(X, top, 1, slab); }
+  ctx.fillStyle = '#fff3'; ctx.fillRect(R - Math.max(2, 0.1 * z), top, Math.max(2, 0.1 * z), yb - top);
+  // 屋上の小物（室外機・給水塔）
+  const prop = (x, w, h, col) => { const X = sx(x), Y = sy(ROOF + h); ctx.fillStyle = col; ctx.fillRect(X, Y, w * z, h * z); ctx.fillStyle = '#0003'; ctx.fillRect(X, Y + h * z * 0.7, w * z, h * z * 0.3); };
+  prop(-10.6, 1.6, 1.1, b.wall2); prop(-14.5, 2.4, 3.2, b.wall2);
+  void t;
+}
+function drawAmbient(ctx, b) {
+  for (const a of G.amb) {
+    if (a.kind === 'star' || a.kind === 'glint') { const tw = 0.5 + 0.5 * Math.sin(performance.now() / 300 + a.ph); ctx.fillStyle = a.kind === 'star' ? `rgba(255,248,252,${0.25 + 0.5 * tw})` : `rgba(255,240,200,${0.2 + 0.5 * tw})`; ctx.fillRect(a.x, a.y, a.size, a.size); }
+    else if (a.kind === 'snow') { ctx.fillStyle = 'rgba(255,255,255,0.85)'; ctx.beginPath(); ctx.arc(a.x, a.y, a.size, 0, 7); ctx.fill(); }
+    else if (a.kind === 'ember') { ctx.fillStyle = 'rgba(255,150,60,0.85)'; ctx.fillRect(a.x, a.y, a.size, a.size); }
+    else if (a.kind === 'leaf') { ctx.fillStyle = 'rgba(120,200,90,0.8)'; ctx.save(); ctx.translate(a.x, a.y); ctx.rotate(a.ph + performance.now() / 700); ctx.fillRect(-a.size * 1.5, -a.size * 0.6, a.size * 3, a.size * 1.2); ctx.restore(); }
+  }
+  void b;
+}
+function drawAim(ctx, t) {
+  const r = G.run; const T = r ? r.T : runDuration(save.costumeLv); const delay = CFG.run.swingContactDelaySeconds;
+  const aimX = r ? r.aimX : X0 + (XC - X0) * Math.pow((T - delay) / T, RUNP);
+  const X = sx(aimX), Y = sy(ROOF) + 3; const z = G.cam.z;
+  const g = ctx.createLinearGradient(0, Y - 2.2 * z, 0, Y); g.addColorStop(0, 'rgba(244,138,180,0)'); g.addColorStop(1, 'rgba(244,138,180,0.45)');
+  ctx.fillStyle = g; ctx.fillRect(X - 3, Y - 2.2 * z, 6, 2.2 * z);
+  ctx.strokeStyle = '#F48AB4'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(X, Y - 7); ctx.lineTo(X + 9, Y); ctx.lineTo(X, Y + 7); ctx.lineTo(X - 9, Y); ctx.closePath(); ctx.stroke();
+  if (r && r.tapT == null) {
+    const left = r.idealTapT - t; if (left > -0.1 && left < 0.9) { const rad = 11 + Math.max(0, left) * 70; ctx.globalAlpha = clamp(1 - left / 0.9, 0, 1); ctx.strokeStyle = '#fff8fc'; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(X, Y, rad, rad * 0.42, 0, 0, 7); ctx.stroke(); ctx.globalAlpha = 1; }
+  }
+}
+function drawRunner(ctx, t, s, devS) {
+  const r = G.run; const st = sakuraAnim(t); const X = sx(st.x), Y = sy(ROOF + (st.bob || 0));
+  if (r && G.state === 'run') {   // 足もとの輪
+    const near = Math.abs(st.x - r.aimX) < 0.35; ctx.strokeStyle = near ? '#fff8fc' : '#F48AB4'; ctx.lineWidth = near ? 3 : 2;
+    ctx.beginPath(); ctx.ellipse(X + 0.15 * G.cam.z, sy(ROOF) + 3, 11, 4.6, 0, 0, 7); ctx.stroke();
+  }
+  if (st.ghost && !rm()) [0.03, 0.06, 0.09].forEach((d, i) => { const g = sakuraAnim(t - d); drawSakuraSt(ctx, g, sx(g.x), sy(ROOF + (g.bob || 0)), s, devS, GHOST_SAK, [0.26, 0.15, 0.07][i]); });
+  drawSakuraSt(ctx, st, X, Y, s, devS);
+}
+function drawBossPlay(ctx, t, s, devS) {
+  const r = G.run; const st = bossAnim(t);
+  if (st.ghost && !rm() && r) [0.04, 0.08, 0.12].forEach((d, i) => { if (t - d <= r.flightStart) return; const g = bossAnim(t - d); drawBossSt(ctx, g, sx(g.x), sy(g.y), s, devS, GHOST_BOSS, [0.22, 0.12, 0.06][i]); });
+  const Y = sy(st.y) + (st.phase ? 2 : 0); drawBossSt(ctx, st, sx(st.x), Y, s, devS);
+  if (st.phase === 'slide' && Math.random() < 0.5) G.parts.push({ kind: 'dust', x: st.x - 0.6, y: 0.1, vx: -2 - Math.random() * 3, vy: 1 + Math.random() * 2, life: 0, max: 0.5, size: 5 + Math.random() * 5, color: '#f4f6ff' });
+  const fr = bossFr(st.wear, st.B != null && st.k > 0.5 ? st.B : st.A); const h = fr ? fr.h * s * (st.sy || 1) : 60;
+  G._bossScr = { x: sx(st.x), y: Y - h, cy: Y - h / 2 };
+}
+function drawParts(ctx) {
+  const z = G.cam.z;
+  for (const p of G.parts) {
+    const k = p.life / p.max, X = sx(p.x), Y = sy(p.y);
+    if (p.kind === 'paper') { ctx.save(); ctx.translate(X, Y); ctx.rotate(p.rot); ctx.globalAlpha = 1 - k * k; ctx.fillStyle = p.color; ctx.fillRect(-p.size / 2, -p.size / 3, p.size, p.size * 0.66); ctx.restore(); }
+    else if (p.kind === 'dust') { ctx.globalAlpha = (1 - k) * 0.8; ctx.fillStyle = p.color; ctx.beginPath(); ctx.arc(X, Y, p.size * (0.6 + k), 0, 7); ctx.fill(); }
+    else if (p.kind === 'puff') { ctx.globalAlpha = (1 - k) * 0.6; ctx.fillStyle = '#e9e2f3'; ctx.beginPath(); ctx.arc(X, Y, p.size * (0.5 + k), 0, 7); ctx.fill(); }
+    else if (p.kind === 'trail') { ctx.globalAlpha = (1 - k) * 0.5; ctx.fillStyle = '#fff8fc'; ctx.beginPath(); ctx.arc(X, Y, p.size * (1 - k * 0.5), 0, 7); ctx.fill(); }
+  }
+  ctx.globalAlpha = 1; void z;
+}
+function drawFx(ctx, t) {
+  for (const f of G.fx) {
+    const k = (t - f.t0) / f.dur; if (k < 0 || k > 1) continue; const X = sx(f.x), Y = sy(f.y);
+    ctx.strokeStyle = `rgba(255,248,252,${1 - k})`; ctx.lineWidth = 3;
+    for (let i = 0; i < f.n; i++) { const a = i / f.n * Math.PI * 2 + 0.2; const r0 = 14 + k * 26, r1 = r0 + 16 + k * 10; ctx.beginPath(); ctx.moveTo(X + Math.cos(a) * r0, Y + Math.sin(a) * r0); ctx.lineTo(X + Math.cos(a) * r1, Y + Math.sin(a) * r1); ctx.stroke(); }
+  }
+  G.fx = G.fx.filter(f => t - f.t0 < f.dur + 0.1);
+}
+function drawLines(ctx) { ctx.strokeStyle = 'rgba(255,248,252,0.35)'; ctx.lineWidth = 1.5; for (const l of G.lines) { ctx.beginPath(); ctx.moveTo(l.x, l.y); ctx.lineTo(l.x + l.len, l.y); ctx.stroke(); } }
+function canvasBubble(ctx, x, y, text, opts = {}) {
+  ctx.font = `800 ${opts.size || 15}px system-ui, -apple-system, "Hiragino Sans", sans-serif`; const w = ctx.measureText(text).width + 18, h = (opts.size || 15) + 14;
+  let bx = clamp(x - w / 2, 4, W - w - 4); const by = clamp(y - h - 10, 4, VH - h - 4);
+  ctx.fillStyle = opts.bg || '#fff8fc'; ctx.strokeStyle = '#2a1030'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.roundRect ? ctx.roundRect(bx, by, w, h, 10) : ctx.rect(bx, by, w, h); ctx.fill(); ctx.stroke();
+  const tx = clamp(x, bx + 10, bx + w - 10); ctx.beginPath(); ctx.moveTo(tx - 6, by + h - 1); ctx.lineTo(tx, by + h + 8); ctx.lineTo(tx + 6, by + h - 1); ctx.fill();
+  ctx.fillStyle = opts.fg || '#2a1030'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(text, bx + w / 2, by + h / 2 + 1); ctx.textBaseline = 'alphabetic';
+}
+function drawPops(ctx, t, bv) {
+  const r = G.run; const s = charScale();
+  for (const p of G.pops) {
+    const k = (t - p.t0) / p.dur; if (k < 0 || k > 1) continue;
+    if (p.kind === 'judge') {
+      const sc = k < 0.12 ? 0.6 + k / 0.12 * 0.5 : 1.1 - Math.min(0.1, (k - 0.12)); ctx.save(); ctx.translate(W / 2, VH * 0.2); ctx.scale(sc, sc); ctx.globalAlpha = k > 0.8 ? (1 - k) / 0.2 : 1;
+      ctx.font = '400 44px "Dela Gothic One", system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.lineWidth = 8; ctx.strokeStyle = '#2a1030'; ctx.strokeText(p.text, 0, 0);
+      ctx.fillStyle = { 'PERFECT!': '#EACB59', 'GREAT!': '#F48AB4', 'GOOD!': '#8DCEEF' }[p.text] || '#fff8fc'; ctx.fillText(p.text, 0, 0); ctx.restore();
+    } else if (p.kind === 'onom') {
+      ctx.save(); ctx.translate(sx(p.x), sy(p.y) - k * 12); ctx.rotate(-0.12); ctx.globalAlpha = 1 - k * k; ctx.font = '400 26px "Dela Gothic One", system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.lineWidth = 6; ctx.strokeStyle = '#2a1030'; ctx.strokeText(p.text, 0, 0); ctx.fillStyle = '#fff8fc'; ctx.fillText(p.text, 0, 0); ctx.restore();
+    } else if (p.kind === 'bubble') {
+      let x, y;
+      if (p.who === 'boss') { if (G._bossScr) { x = G._bossScr.x; y = G._bossScr.y; } else { x = sx(0.1); y = sy(ROOF) - 400 * s; } }
+      else { const xs = r ? sakXAt(r, animTime(r, Math.max(t, r.startT))) : X0; x = sx(xs); y = sy(ROOF) - 500 * s; }
+      ctx.globalAlpha = k > 0.85 ? (1 - k) / 0.15 : 1; canvasBubble(ctx, x, y, p.text, { size: p.text.startsWith('ぶひ') ? 17 : 14 }); ctx.globalAlpha = 1;
+    }
+  }
+  G.pops = G.pops.filter(p => t - p.t0 < p.dur + 0.05);
+}
+function drawIndicators(ctx, bv) {
+  // 進行方向の矢印
+  if (G._bossScr) { const a = Math.atan2(-bv.vy, bv.vx); const cx = G._bossScr.x + Math.cos(a) * 54, cy = G._bossScr.cy + Math.sin(a) * 54;
+    ctx.save(); ctx.translate(cx, cy); ctx.rotate(a); ctx.fillStyle = '#F48AB4'; ctx.strokeStyle = '#2a1030'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(10, 0); ctx.lineTo(-6, -8); ctx.lineTo(-2, 0); ctx.lineTo(-6, 8); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore(); }
+  // 地面が画面外なら高さを表示
+  const g = sy(0); if (g > VH - 4) {
+    const label = `▼ 地面まで ${Math.round(bv.y)}m`; ctx.font = '700 12px "Martian Mono", ui-monospace, monospace'; ctx.textAlign = 'center'; const w = ctx.measureText(label).width + 16;
+    ctx.fillStyle = '#17162Cd0'; ctx.fillRect(W / 2 - w / 2, VH - 26, w, 20); ctx.fillStyle = '#8DCEEF'; ctx.fillText(label, W / 2, VH - 11.5);
+  }
+}
+function drawTiming(t) {
+  const c = $('#timing'); const ctx = c.getContext('2d'); const w = c.width / DPR, h = c.height / DPR; if (!w) return;
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0); ctx.clearRect(0, 0, w, h);
+  const r = G.run, k = G.practice ? 1.5 : 1, span0 = -0.62, span1 = 0.32, pad = 10;
+  const X = d => pad + (d - span0) / (span1 - span0) * (w - pad * 2); const cy = h / 2 + 4;
+  ctx.fillStyle = '#2B2344'; ctx.fillRect(pad, cy - 7, w - pad * 2, 14);
+  const cols = ['#4a3f6e', '#5a8fb0', '#c8679a', '#EACB59']; const tm = [...CFG.timing].reverse();
+  tm.forEach((j, i) => { const e = j.maxAbsErrorSeconds * k; ctx.fillStyle = cols[i]; ctx.fillRect(X(-e), cy - 7, X(e) - X(-e), 14); });
+  ctx.fillStyle = '#fff8fc'; ctx.fillRect(X(0) - 1, cy - 11, 2, 22);
+  ctx.font = '700 9px system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.fillStyle = '#b8aed2'; ctx.fillText('ここで「たたく」', X(0), cy - 13);
+  let d = span0; if (r) d = (r.tapT != null ? r.tapT : t) - r.idealTapT;
+  const mx = clamp(X(d), pad, w - pad);
+  ctx.fillStyle = r && r.tapT != null ? ({ PERFECT: '#EACB59', GREAT: '#F48AB4', GOOD: '#8DCEEF', GRAZE: '#b8aed2' }[r.judge.label] || '#e8424f') : '#fff8fc';
+  ctx.beginPath(); ctx.moveTo(mx, cy - 2); ctx.lineTo(mx - 6, cy + 12); ctx.lineTo(mx + 6, cy + 12); ctx.fill();
+  if (r && r.tapT != null) { ctx.fillStyle = '#fff8fc'; ctx.textAlign = d < 0 ? 'left' : 'right'; ctx.font = '700 10px "Martian Mono", ui-monospace, monospace'; const ms = Math.round(r.judge.signed * 1000); ctx.fillText(`${ms > 0 ? '+' : ''}${ms}ms`, d < 0 ? pad : w - pad, h - 1); }
+}
+
+// ---- 一時停止・タブ復帰 ----
+function activePlay() { return G.screen === 'play' && ['run', 'swing', 'flight', 'land', 'miss'].includes(G.state) && !G.run?.shown; }
+function pauseGame() {
+  if (!activePlay() || G.paused) return; G.paused = true; Clock.pause(); Sound.windOff();
+  $('#ps-sound').checked = !save.settings.mute; $('#ps-motion').checked = save.settings.reduceMotion; $('#ov-pause').hidden = false;
+}
+async function resumeGame() {
+  $('#ov-pause').hidden = true; const cd = $('#countdown'); cd.hidden = false;
+  for (const n of [3, 2, 1]) { cd.textContent = n; Sound.click(); await sleep(1000); if (!G.paused) break; }
+  cd.hidden = true; G.paused = false; Clock.resume(); if (G.state === 'flight') Sound.windOn();
+}
+
+// ---- 結果 ----
+async function showResult() {
+  const r = G.run, c = r.course; Sound.windOff(); Cloud.applyPending();
+  const ov = $('#ov-result'); ov.hidden = false; ov.querySelector('.scroll').scrollTop = 0;
+  const hit = !r.miss, d = hit ? r.L.dist : 0, relief = hit ? stressRelief(d, c) : 0, remain = 100 - relief;
+  const rw = r.reward;
+  $('#res-course').textContent = `WORLD ${c.world}/${CFG.worldCount} · COURSE ${c.id}/${CFG.courseCount} ${courseShort(c)}`;
+  const jl = hit ? r.judge.label : 'MISS'; const je = $('#res-judge'); je.className = 'res-judge ' + jl;
+  je.textContent = hit ? `${jl}  ${r.judge.signed < 0 ? '早め' : '遅め'} ${Math.round(r.judge.e * 1000)}ms` : (r.miss === 'none' ? 'MISS（入力なし）' : r.miss === 'early' ? 'MISS（早すぎ）' : 'MISS（遅すぎ）');
+  const hl = $('#res-headline'); const clear = hit && d >= c.targetMeters;
+  let head = ''; if (r.practice) head = clear ? '練習でクリア距離！' : '練習モード';
+  else if (!hit) head = 'もう一回！'; else if (rw?.newBest && clear) head = 'NEW RECORD!'; else if (clear) head = 'COURSE CLEAR!'; else if (rw?.newBest) head = '自己ベスト更新！'; else head = `あと ${fmt1(c.targetMeters - d)}m！`;
+  hl.innerHTML = ''; hl.append(head); if (clear && !r.practice) { const st = document.createElement('span'); st.className = 'stamp'; st.innerHTML = '定時<br>退社'; hl.append(st); }
+  const line = !hit ? 'まだまだ…' : clear ? '今日は定時！' : relief >= 40 ? 'ちょっとスッキリ' : 'まだまだ…'; $('#res-line').textContent = line;
+  // 距離のカウントアップ
+  const el = $('#res-dist'); const t0 = performance.now(); const dur = rm() ? 0 : 650;
+  (function tick() { const k = dur ? clamp((performance.now() - t0) / dur, 0, 1) : 1; el.textContent = fmt1(d * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(tick); else el.textContent = fmt1(d); })();
+  // サクラ
+  const sc = $('#res-sakura'); drawResultSakura(sc, clear ? 'clear' : hit ? 'hit' : 'miss', r.costumeLv, r.fanLv);
+  // ストレス
+  const bar = $('#res-stress-bar'); bar.style.transition = 'none'; bar.style.width = '100%'; $('#res-stress').textContent = 100;
+  requestAnimationFrame(() => requestAnimationFrame(() => { bar.style.transition = ''; bar.style.width = remain + '%'; }));
+  setTimeout(() => { $('#res-stress').textContent = remain; }, rm() ? 0 : 700);
+  // 報酬
+  const ul = $('#res-rewards'); ul.innerHTML = '';
+  const li = (a, b2, hlc) => { const e = document.createElement('li'); if (hlc) e.className = 'hl'; e.innerHTML = `<span>${a}</span><b>${b2}</b>`; ul.append(e); };
+  if (r.practice) li('練習モード', '記録・報酬なし');
+  else if (rw) {
+    li('経験値', `+${rw.xp} XP`); li('コイン', `+${rw.coins}`);
+    if (rw.firstClear) li('初回クリアボーナス込み', `XP+${CFG.economy.firstClearXp} / +${CFG.economy.firstClearCoins}c`, true);
+    if (rw.lvUp) li(`PLAYER Lv.${rw.lvUp} に上がった！`, `強化上限 Lv.${CFG.equipmentCapByPlayerLevel[rw.lvUp - 1]}`, true);
+    rw.newUnlocks.forEach(id => li(`COURSE ${id} 解放！`, courseShort(courseById(id)), true));
+    if (rw.allClear) li('全10コースクリア！', '特典が解放されました', true);
+    li('所持コイン', `${save.coins}`);
+  }
+  if (rw && (rw.coins || rw.xp)) setTimeout(() => Sound.coin(), rm() ? 0 : 900);
+  // 次のコース
+  const next = courseById(c.id + 1); const nb = $('#btn-next');
+  nb.disabled = !(next && isUnlocked(next)); nb.textContent = next ? (isUnlocked(next) ? `次のコースへ（${next.id}）` : `COURSE ${next.id} 未解放`) : '全コース制覇！'; nb.title = next && !isUnlocked(next) ? lockReason(next) : '';
+  // 結果画像（確定時に事前生成）
+  $('#res-img').removeAttribute('src'); G.resultBlob = null;
+  const info = { c, d, hit, judge: jl, relief, clear, r };
+  const text = shareText(info); $('#btn-x').href = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(text);
+  try {
+    const blob = await makeResultImage(info); G.resultBlob = blob; G.resultName = `buttobi-harisen_course${c.id}_${fmt1(d)}m.png`;
+    if (G.resultUrl) URL.revokeObjectURL(G.resultUrl); G.resultUrl = URL.createObjectURL(blob); $('#res-img').src = G.resultUrl;
+    let canShare = false; try { canShare = !!(navigator.canShare && navigator.canShare({ files: [new File([blob], G.resultName, { type: 'image/png' })] })); } catch (e) { canShare = false; }
+    $('#btn-share-img').hidden = !canShare;
+  } catch (e) { toast('結果画像を作れませんでした', 'error'); }
+  if (rw?.allClear) setTimeout(() => toast('全10コースクリア！ タイトルの「全クリア特典」を見てください'), 1200);
+}
+function gameUrl() { if (GAME_URL) return GAME_URL; try { const u = new URL(location.href); u.hash = ''; u.search = ''; return u.href; } catch (e) { return ''; } }
+function shareText(info) {
+  const { c, d, relief } = info; const url = gameUrl();
+  return `サクラの定時退社！ぶっとびハリセンで ${fmt1(d)}m！ ${c.name}／ストレス${relief}%解消！ #ぶっとびハリセン #ブラウザゲーム ${url}`.trim();
+}
+function drawResultSakura(cv, mode, costumeLv, fanLv) { G.resSak = { cv, mode, lv: costumeLv, fanLv, t0: performance.now() }; drawResultSakuraAnim(performance.now()); }
+/** 結果画面のサクラ：クリアなら跳ねて喜ぶ、届かなければ小さくガッツポーズ、MISSならため息 */
+function drawResultSakuraAnim(now) {
+  const R = G.resSak; if (!R) return; const cv = R.cv; const dpr = Math.min(window.devicePixelRatio || 1, 2); const cw = cv.clientWidth, ch = cv.clientHeight; if (!cw) return;
+  if (cv.width !== Math.round(cw * dpr) || cv.height !== Math.round(ch * dpr)) { cv.width = Math.round(cw * dpr); cv.height = Math.round(ch * dpr); }
+  const x = cv.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0); x.clearRect(0, 0, cw, ch);
+  const s = (ch - 10) / 510 * 0.86, pxm = 493 * s / 1.9, tc = (now - R.t0) / 1000; let st;
+  if (R.mode === 'clear') st = cheerPose(tc);
+  else if (R.mode === 'hit') st = cheerPose(tc * 0.8, SAK.fistpump, SAK.fistpump, 0.07);
+  else { st = idlePose(tc * 0.7); st.lean = -0.02; st.rot = 0.02 * Math.sin(tc * 1.3); }
+  finishSak(st, R.lv, R.fanLv); if (rm()) { st.bob = 0; st.sx = st.sy = 1; st.rot = 0; }
+  drawSakuraSt(x, st, cw / 2, ch - 4 - (st.bob || 0) * pxm, s, s * dpr);
+}
+async function makeResultImage(info) {
+  const { c, d, hit, judge, relief, clear, r } = info; const cw = 1200, ch = 630; const cv = mkCanvas(cw, ch); const x = cv.getContext('2d');
+  try { await document.fonts.load('400 40px "Dela Gothic One"', 'サクラ定時退社ぶっとびハリセン'); await document.fonts.load('700 40px "Martian Mono"', '0123456789.m'); } catch (e) { /* フォント未取得でも代替で描く */ }
+  const bg = IMG['bg_' + c.biome];
+  if (bg) { const s = Math.max(cw / 1536, ch / 1024); x.drawImage(bg, (cw - 1536 * s) / 2, ch - 1024 * s + 40 * s, 1536 * s, 1024 * s); } else { x.fillStyle = '#2B2344'; x.fillRect(0, 0, cw, ch); }
+  if (COURSE_FX[c.id]?.tint) { x.fillStyle = COURSE_FX[c.id].tint; x.fillRect(0, 0, cw, ch); }
+  const g = x.createLinearGradient(0, 0, cw, 0); g.addColorStop(0, 'rgba(23,22,44,0.94)'); g.addColorStop(0.55, 'rgba(23,22,44,0.82)'); g.addColorStop(0.72, 'rgba(23,22,44,0.15)'); g.addColorStop(1, 'rgba(23,22,44,0)');
+  x.fillStyle = g; x.fillRect(0, 0, cw, ch);
+  const L = 60;
+  x.fillStyle = '#8DCEEF'; x.font = '700 22px "Martian Mono", ui-monospace, monospace'; x.fillText(`WORLD ${c.world}/${CFG.worldCount} · COURSE ${c.id}/${CFG.courseCount}`, L, 78);
+  x.fillStyle = '#FFF8FC'; x.font = '400 44px "Dela Gothic One", system-ui, sans-serif'; x.fillText(c.name, L, 134);
+  x.font = '700 150px "Martian Mono", ui-monospace, monospace'; const ds = fmt1(d); x.fillStyle = clear ? '#EACB59' : '#FFF8FC'; x.fillText(ds, L - 6, 300);
+  const dw = x.measureText(ds).width; x.font = '700 54px "Martian Mono", ui-monospace, monospace'; x.fillStyle = '#b8aed2'; x.fillText('m', L + dw + 4, 300);
+  x.font = '400 34px "Dela Gothic One", system-ui, sans-serif'; x.fillStyle = '#F48AB4'; x.fillText(hit ? `${judge}！  ストレス${relief}%解消！` : 'MISS…  また挑戦！', L, 362);
+  x.font = '700 24px system-ui, -apple-system, "Hiragino Sans", sans-serif'; x.fillStyle = '#FFF8FC';
+  x.fillText(`ハリセン Lv.${r.fanLv} ${CFG.equipmentNames[r.fanLv - 1]}　衣装 Lv.${r.costumeLv} ${CFG.equipmentNames[r.costumeLv - 1]}`, L, 418);
+  x.fillStyle = '#b8aed2'; x.fillText(`PLAYER Lv.${r.pLv}　目標 ${c.targetMeters}m${r.practice ? '　（練習モード）' : ''}`, L, 454);
+  if (clear && !r.practice) { x.save(); x.translate(600, 230); x.rotate(-0.25); x.strokeStyle = '#e8424f'; x.lineWidth = 6; x.beginPath(); x.arc(0, 0, 62, 0, 7); x.stroke(); x.fillStyle = '#e8424f'; x.font = '400 30px "Dela Gothic One", system-ui, sans-serif'; x.textAlign = 'center'; x.fillText('定時', 0, -4); x.fillText('退社', 0, 32); x.restore(); }
+  // 右40%：喜ぶサクラ（＋部長）
+  const wearFr = atlasFrames('boss_wear')?.[c.bossWear - 1]; if (wearFr) { const s2 = 0.62; x.save(); x.globalAlpha = 0.95; blit(x, wearFr, 1000, 548 - wearFr.h * s2, wearFr.w * s2, wearFr.h * s2, s2); x.restore(); }
+  const ss = 0.98; drawSakura(x, r.costumeLv, r.fanLv, hit ? SAK.victory : SAK.fistpump, 900, 556, ss, ss);
+  // 下部：タイトルとURL
+  x.fillStyle = 'rgba(23,22,44,0.92)'; x.fillRect(0, ch - 66, cw, 66); x.fillStyle = '#F48AB4'; x.fillRect(0, ch - 66, cw, 4);
+  x.fillStyle = '#FFF8FC'; x.font = '400 26px "Dela Gothic One", system-ui, sans-serif'; x.textAlign = 'left'; x.fillText('サクラの定時退社！ぶっとびハリセン', L, ch - 22);
+  x.fillStyle = '#8DCEEF'; x.font = '500 18px "Martian Mono", ui-monospace, monospace'; x.textAlign = 'right'; const u = gameUrl(); x.fillText(u.length > 60 ? u.slice(0, 57) + '…' : u, cw - 40, ch - 24);
+  return await new Promise((res, rej) => cv.toBlob(b => b ? res(b) : rej(new Error('toBlob')), 'image/png'));
+}
+async function saveResultImage() {
+  const blob = G.resultBlob; if (!blob) { toast('画像を準備中です'); return; }
+  const dl = await cap('downloads');
+  if (dl) {
+    try { const res = await dl.save({ filename: G.resultName, data: blob }); if (res && res.status === 'saved') toast('結果画像を保存しました'); }
+    catch (e) { if (e && e.code === 'declined') toast('保存をキャンセルしました'); else if (e && e.code === 'rate_limited') toast('少し待ってからもう一度押してください'); else fallbackDownload(blob); }
+    return;
+  }
+  fallbackDownload(blob);
+}
+function fallbackDownload(blob) {
+  try { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = G.resultName; document.body.append(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2000); toast('保存できない場合は、画像を長押しして保存してください'); }
+  catch (e) { toast('画像を長押しして保存してください'); }
+}
+async function shareResultImage() {
+  const blob = G.resultBlob; if (!blob) return; const file = new File([blob], G.resultName, { type: 'image/png' });
+  try { await navigator.share({ files: [file], text: shareText({ c: G.run.course, d: G.run.miss ? 0 : G.run.L.dist, relief: G.run.miss ? 0 : stressRelief(G.run.L.dist, G.run.course) }) }); }
+  catch (e) { if (e && e.name === 'AbortError') toast('共有をキャンセルしました（記録と画像はそのままです）'); else { toast('共有できませんでした。画像を保存して投稿してください'); $('#btn-share-img').hidden = true; } }
+}
+
+// ---------------------------------------------------------------------
+//  画面
+// ---------------------------------------------------------------------
+const SCREENS = ['title', 'opening', 'courses', 'equip', 'play', 'reward', 'settings', 'dev'];
+function show(name) {
+  for (const s of SCREENS) $('#scr-' + s).hidden = s !== name;
+  if (name !== 'play') { G.resSak = null; $('#ov-result').hidden = true; $('#ov-pause').hidden = true; G.state = 'idle'; G.run = null; Sound.windOff(); Cloud.applyPending(); }
+  G.screen = name;
+  if (name === 'title') renderTitle(); else if (name === 'courses') renderCourses(); else if (name === 'equip') renderEquip();
+  else if (name === 'reward') renderReward(); else if (name === 'settings') renderSettings(); else if (name === 'dev') renderDev();
+}
+function refreshAll() { if (G.screen !== 'play') show(G.screen); }
+
+function renderTitle() {
+  const lv = playerLevel();
+  $('#title-stats').innerHTML = `<span class="chip">PLAYER <b>Lv.${lv}</b></span><span class="chip coin"><b>${save.coins}</b> コイン</span><span class="chip">クリア <b>${save.cleared.length}/${CFG.courseCount}</b></span>`;
+  $('#btn-start').textContent = save.seenOpening ? 'はじめる' : 'はじめる（オープニング）'; badge();
+}
+/** タイトル：待機の呼吸 → ときどき跳ねてガッツポーズ */
+function titleSak(t) {
+  const cyc = t % 4.4; let st;
+  if (cyc < 2.6) { st = idlePose(t); if (cyc > 2.42) { const u = smooth((cyc - 2.42) / 0.18); Object.assign(st, { B: SAK.fistpump, k: u, fanAng: lerp(st.fanAng, SAK_HAND[SAK.fistpump][2], u), fA: SAK.idle, fB: SAK.fistpump, fk: u }); } }
+  else { st = cheerPose(cyc - 2.6); if (cyc > 4.16) { const u = smooth((cyc - 4.16) / 0.24); st = { A: st.A, B: SAK.idle, k: u, bob: st.bob * (1 - u), sy: 1, sx: 1, lean: 0, rot: 0, fanAng: lerp(SAK_HAND[st.A][2], -18, u), fA: st.A, fB: SAK.idle, fk: u }; } }
+  return st;
+}
+function titleBoss(t) {
+  const cyc = (t + 1.3) % 4.4, b = Math.sin(t * 2.2); let B = null, k = 0, hop = 0;
+  if (cyc > 2.8 && cyc < 4.2) { B = BOSS.celebrate; k = smooth((cyc - 2.8) / 0.2) * (1 - smooth((cyc - 4.0) / 0.2)); }
+  if (cyc > 2.9 && cyc < 3.9) hop = 0.14 * Math.abs(Math.sin(Math.PI * (cyc - 2.9) / 0.5));
+  return { wear: 1, A: BOSS.thumbs, B, k, center: false, rot: 0, sx: 1 - 0.01 * b, sy: 1 + 0.015 * b, flip: true, hop };
+}
+function drawTitleCanvas(now) {
+  const cv = $('#title-canvas'); const dpr = Math.min(window.devicePixelRatio || 1, 2); const cw = cv.clientWidth, ch = cv.clientHeight; if (!cw) return;
+  if (cv.width !== Math.round(cw * dpr) || cv.height !== Math.round(ch * dpr)) { cv.width = Math.round(cw * dpr); cv.height = Math.round(ch * dpr); }
+  const x = cv.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0); x.clearRect(0, 0, cw, ch);
+  const s = (ch - 8) / 510; const t = now / 1000; const bob = Math.sin(t * 2.4) * 3;
+  x.fillStyle = '#0006'; x.beginPath(); x.ellipse(cw / 2 - 40 * s * 4, ch - 6, 60 * s * 4, 7, 0, 0, 7); x.fill(); x.beginPath(); x.ellipse(cw / 2 + 50 * s * 4, ch - 6, 70 * s * 4, 7, 0, 0, 7); x.fill();
+  void bob; const pxm = 493 * s / 1.9; const st = finishSak(titleSak(t), save.costumeLv, save.fanLv);
+  drawSakuraSt(x, st, cw / 2 - 42 * s * 4, ch - 4 - (st.bob || 0) * pxm, s, s * dpr);
+  const bs = s * 0.92; const bst = titleBoss(t); drawBossSt(x, bst, cw / 2 + 52 * s * 4, ch - 4 - bst.hop * pxm, bs, bs * dpr);
+}
+
+function renderCourses() {
+  $('#cs-plv').textContent = 'Lv.' + playerLevel(); $('#cs-coins').textContent = save.coins;
+  const host = $('#course-list'); host.innerHTML = '';
+  for (let w = 1; w <= CFG.worldCount; w++) {
+    const cs = CFG.courses.filter(c => c.world === w); const b = BIOME[cs[0].biome];
+    const sec = document.createElement('section'); sec.className = 'world';
+    sec.innerHTML = `<div class="world-head"><h3>${b.name}</h3><span class="chip">WORLD ${w}/${CFG.worldCount}</span></div><div class="courses"></div>`;
+    const grid = sec.querySelector('.courses');
+    for (const c of cs) {
+      const un = isUnlocked(c), best = save.best[c.id], cl = save.cleared.includes(c.id);
+      const btn = document.createElement('button'); btn.className = 'course' + (un ? '' : ' locked');
+      btn.innerHTML = `<div class="thumb" style="background-image:url('assets/thumbs/${c.biome}.webp');--tint:${COURSE_FX[c.id]?.tint || 'transparent'}"><canvas class="boss-mini"></canvas></div>
+        ${un ? '' : `<div class="lock">🔒 ${lockReason(c)}</div>`}
+        ${cl ? '<span class="stamp">決裁<br>済</span>' : ''}
+        <div class="meta"><span class="no">COURSE ${c.id}/${CFG.courseCount}</span><span class="name">${courseShort(c)}</span>
+        <span class="facts"><span>目標 <b>${c.targetMeters}m</b></span><span>ベスト <b>${best ? fmt1(best) + 'm' : '—'}</b></span><span>${envLabel(c)}</span><span>推奨 Lv.${c.suggestedFan}</span></span></div>`;
+      btn.addEventListener('click', () => { Sound.init(); Sound.click(); if (un) openSheet(c.id); else toast(lockReason(c)); });
+      grid.append(btn);
+      loadImg('boss_wear').then(() => requestAnimationFrame(() => drawFrameFit(btn.querySelector('.boss-mini'), atlasFrames('boss_wear')?.[c.bossWear - 1], 1)));
+    }
+    host.append(sec);
+  }
+}
+function estimatePerfect(c) { return computeLaunch(CFG.timing[0].powerMultiplier, save.fanLv, save.costumeLv, playerLevel(), c).dist; }
+let sheetCourse = null;
+function openSheet(id) {
+  const c = courseById(id); sheetCourse = c; $('#ov-sheet').hidden = false;
+  $('#sh-no').textContent = `WORLD ${c.world}/${CFG.worldCount} · COURSE ${c.id}/${CFG.courseCount} · ${worldName(c)}`;
+  $('#sh-title').textContent = courseShort(c);
+  const best = save.best[c.id]; const est = estimatePerfect(c);
+  $('#sh-kv').innerHTML = `<dt>目標</dt><dd class="num">${c.targetMeters} m</dd><dt>ベスト</dt><dd class="num">${best ? fmt1(best) + ' m' : '—'}</dd><dt>環境</dt><dd>${envLabel(c)}</dd><dt>推奨装備</dt><dd>ハリセン・衣装 Lv.${c.suggestedFan}</dd><dt>PERFECT時の目安</dt><dd class="num" style="color:${est >= c.targetMeters ? 'var(--ok)' : 'var(--gold)'}">${fmt1(est)} m</dd>`;
+  const eq = (title, lv, sug, atlas) => `<div class="mini-eq"><canvas data-atlas="${atlas}" data-lv="${lv}"></canvas><div style="min-width:0"><div class="t">${title}</div><div class="v">Lv.${lv} ${CFG.equipmentNames[lv - 1]}</div>${lv < sug ? `<div class="warn">推奨 Lv.${sug}</div>` : ''}</div></div>`;
+  $('#sh-equip').innerHTML = eq('ハリセン', save.fanLv, c.suggestedFan, 'harisen') + eq('バニー衣装', save.costumeLv, c.suggestedCostume, 'bunny_costumes');
+  $('#sh-practice').checked = false;
+  Promise.all([loadImg('harisen'), loadImg('bunny_costumes'), loadImg('boss_wear')]).then(() => {
+    document.querySelectorAll('#sh-equip canvas').forEach(cv => drawFrameFit(cv, atlasFrames(cv.dataset.atlas)?.[+cv.dataset.lv - 1], 2));
+    drawFrameFit($('#sh-boss'), atlasFrames('boss_wear')?.[c.bossWear - 1], 2);
+  });
+}
+function closeSheet() { $('#ov-sheet').hidden = true; }
+
+function renderEquip() {
+  const lv = playerLevel(), capL = equipCap(); $('#eq-coins').textContent = save.coins; $('#eq-plv').textContent = 'Lv.' + lv; $('#eq-cap').textContent = 'Lv.' + capL;
+  const th = CFG.playerXpThresholds; const cur = th[lv - 1], nxt = th[lv];
+  $('#eq-xpbar').style.width = nxt ? clamp((save.totalXp - cur) / (nxt - cur) * 100, 0, 100) + '%' : '100%';
+  $('#eq-xptext').textContent = nxt ? `XP ${save.totalXp} / ${nxt}` : `XP ${save.totalXp}（最大）`;
+  renderEqSection('fan', '紙ハリセン', 'harisen', save.fanLv, `初速 +${CFG.physics.fanSpeedPerLevel} m/s ずつ`);
+  renderEqSection('costume', 'バニー衣装', 'bunny_costumes', save.costumeLv, `初速 +${CFG.physics.costumeSpeedPerLevel} m/s ずつ・助走が ${CFG.run.durationDecreasePerCostumeLevel * 1000}ms ずつ速くなる`);
+}
+function renderEqSection(kind, title, atlas, L, effect) {
+  const host = $(kind === 'fan' ? '#eq-fan' : '#eq-costume'); const capL = equipCap(); const max = CFG.equipmentLevelCap;
+  const cost = upgradeCost(L); let label, can = false;
+  if (L >= max) label = '最大レベル';
+  else if (L >= capL) { const need = CFG.equipmentCapByPlayerLevel.findIndex(v => v > L) + 1; label = `PLAYER Lv.${need} で上限開放`; }
+  else if (save.coins < cost) label = `Lv.${L + 1}へ強化 ${cost}c（あと${cost - save.coins}c）`;
+  else { label = `Lv.${L + 1}へ強化 ${cost}c`; can = true; }
+  host.innerHTML = `<h3>${title}</h3>
+    <div class="eq-cur"><canvas data-i="${L - 1}"></canvas><div style="min-width:0;display:grid;gap:6px">
+      <div><div class="lv">Lv.${L} / ${max}</div><div class="nm">${CFG.equipmentNames[L - 1]}</div><div class="eff">${effect}</div></div>
+      <button class="btn ${can ? 'primary' : ''}" ${can ? '' : 'disabled'} data-up="${kind}">${label}</button></div></div>
+    <div class="eq-grid">${CFG.equipmentNames.map((n, i) => { const lv = i + 1; const st = lv === L ? 'cur' : lv < L ? 'own' : lv > capL ? 'capped future' : 'future';
+      return `<div class="eq-item ${st}"><canvas data-i="${i}"></canvas>${lv === L ? '<span class="tagc">装備中</span>' : ''}<span class="l">Lv.${lv}</span><span class="n">${n}</span></div>`; }).join('')}</div>`;
+  host.querySelector('[data-up]').addEventListener('click', () => upgrade(kind));
+  loadImg(atlas).then(() => { const fr = atlasFrames(atlas); host.querySelectorAll('canvas').forEach(cv => drawFrameFit(cv, fr?.[+cv.dataset.i], 3)); });
+}
+function upgrade(kind) {
+  const key = kind === 'fan' ? 'fanLv' : 'costumeLv'; const L = save[key]; const cost = upgradeCost(L);
+  if (L >= CFG.equipmentLevelCap || L >= equipCap() || save.coins < cost) return;
+  save.coins -= cost; save[key] = L + 1; persist(); Sound.init(); Sound.coin();
+  toast(`${kind === 'fan' ? 'ハリセン' : 'バニー衣装'}が Lv.${L + 1}「${CFG.equipmentNames[L]}」になった！`); renderEquip();
+}
+
+function renderReward() {
+  const all = save.cleared.length === CFG.courseCount;
+  $('#reward-dots').innerHTML = CFG.courses.map(c => `<span class="${save.cleared.includes(c.id) ? 'on' : ''}">${c.id}</span>`).join('');
+  $('#reward-title').textContent = all ? 'サクラのブロマイド（解放）' : 'サクラのブロマイド';
+  $('#reward-cond').textContent = all ? '全10コースクリア達成！' : `全10コースのクリアで解放（いま ${save.cleared.length}/${CFG.courseCount}）。装備Lv10やPLAYER Lv5だけでは解放されません。`;
+  $('#reward-notice').innerHTML = all
+    ? '<b>テスト版の扱い：</b>ここでは解放表示までです。本公開版では、サーバーがクリア記録を再計算・確認してから、非公開ストレージの期限付きURL（60秒）でブロマイド原寸を配布します。このテスト版はサーバー未接続のため<b>限定ダウンロードは未実装</b>で、特典画像そのものもページに含めていません。'
+    : '<b>テスト版の扱い：</b>特典画像はページに含めていません（クリア前に原寸を先読みしません）。本公開版ではサーバーがクリア記録を確認してからダウンロードを発行します。このテスト版では<b>限定ダウンロードは未実装</b>です。';
+  const cv = $('#reward-canvas'); loadImg('sakura_poses').then(() => {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2); const cw = cv.clientWidth, ch = cv.clientHeight; cv.width = cw * dpr; cv.height = ch * dpr;
+    const x = cv.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const off = mkCanvas(cw * dpr, ch * dpr); const ox = off.getContext('2d'); ox.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const s = (ch - 20) / 510; drawSakura(ox, 1, 1, SAK.victory, cw / 2, ch - 8, s, s * dpr, { fan: false });
+    if (!all) { ox.globalCompositeOperation = 'source-in'; ox.fillStyle = '#0d0b1c'; ox.fillRect(0, 0, cw, ch); }
+    x.clearRect(0, 0, cw, ch); x.setTransform(1, 0, 0, 1, 0, 0); x.drawImage(off, 0, 0); x.setTransform(dpr, 0, 0, dpr, 0, 0);
+    x.font = '400 22px "Dela Gothic One", system-ui, sans-serif'; x.textAlign = 'center'; x.fillStyle = all ? '#EACB59' : '#8a80a8'; x.fillText(all ? 'UNLOCKED' : '？？？', cw / 2, 34);
+  });
+}
+function renderSettings() {
+  $('#set-sound').checked = !save.settings.mute; $('#set-motion').checked = save.settings.reduceMotion;
+  $('#save-info').textContent = `保存先：${Cloud.state === 'on' ? 'このブラウザ＋クラウドの個人領域' : 'このブラウザ'}。ブラウザのデータ削除で消えます。（${BUILD_ID}）`;
+}
+function setSetting(k, v) { save.settings[k] = v; persist(); Sound.applyMute(); if (k === 'reduceMotion') initAmbient(); }
+async function resetSave() {
+  if (!await confirmModal('セーブデータを初期化しますか？', 'レベル・コイン・装備・クリア記録・ベスト記録がすべて消えます。元に戻せません。', '初期化する', 'やめる')) return;
+  const keepSettings = save.settings; save = newSave(); save.settings = keepSettings; save.seenOpening = true; saveEnabled = true; persist();
+  sakCache.clear(); toast('セーブデータを初期化しました'); show('title');
+}
+
+// ---- 開発用：素材チェック ----
+function renderDev() {
+  const tb = $('#dev-balance'); const rows = CFG.courses.map(c => { const d = computeLaunch(CFG.timing[0].powerMultiplier, c.suggestedFan, c.suggestedCostume, c.requiredPlayerLevel, c).dist; return `<tr><td>${c.id} ${courseShort(c)}</td><td>${c.targetMeters}</td><td>Lv${c.suggestedFan}/Lv${c.requiredPlayerLevel}</td><td>${d.toFixed(2)}</td><td class="${d >= c.targetMeters ? 'ok' : 'ng'}">${d >= c.targetMeters ? '到達' : '不足'}</td></tr>`; });
+  const bt = [0.040, 0.0401, 0.085, 0.0851, 0.140, 0.1401, 0.210, 0.2101].map(e => `<tr><td>ズレ ${(e * 1000).toFixed(1)}ms</td><td colspan="4">${judgeTap(10 - CFG.run.swingContactDelaySeconds + e, 10, false).label}</td></tr>`);
+  tb.innerHTML = '<tr><th>コース</th><th>目標m</th><th>装備/PLv</th><th>PERFECT m</th><th></th></tr>' + rows.join('') + '<tr><th>判定境界</th><th colspan="4">結果（上限を含む）</th></tr>' + bt.join('');
+  const host = $('#dev-assets'); host.innerHTML = '';
+  const ids = MAN.assets.map(a => a.id).concat(Object.keys(EXTRA));
+  for (const id of ids) {
+    const a = A[id]; const box = document.createElement('div'); box.className = 'dev-asset'; host.append(box);
+    if (a && a.kind === 'private_reward') { box.innerHTML = `<b>${a.title}</b><span class="small">${a.path} ・ ${a.size.join('×')} ・ 非公開特典のため、このテスト版ページには含めていません（読み込みもしません）。</span>`; continue; }
+    box.innerHTML = `<b>${a ? a.title : id}</b><span class="small" data-st>読み込み中…</span><canvas></canvas>`;
+    loadImg(id).then(im => {
+      const st = IMG_STATUS[id] || {}; const exp = a ? a.size : null;
+      const sizeOk = im && (!exp || (im.naturalWidth === exp[0] && im.naturalHeight === exp[1]));
+      let rectOk = true; if (a?.frames && im) rectOk = a.frames.every(f => f.rect.x >= 0 && f.rect.y >= 0 && f.rect.x + f.rect.w <= im.naturalWidth && f.rect.y + f.rect.h <= im.naturalHeight);
+      box.querySelector('[data-st]').innerHTML = im ? `<span class="${sizeOk && rectOk ? 'ok' : 'ng'}">${sizeOk && rectOk ? '✓ OK' : '✗ 要確認'}</span> ・ 配信: ${st.path} ・ ${im.naturalWidth}×${im.naturalHeight}${exp ? `（manifest ${exp.join('×')}）` : ''}${a?.frames ? ` ・ ${a.frames.length}フレーム・矩形${rectOk ? 'は範囲内' : 'が範囲外'}` : ''}${a ? ` ・ 原本 ${a.path}` : '（派生マスク）'}` : `<span class="ng">✗ 読み込み失敗</span> ・ ${st.path}`;
+      const cv = box.querySelector('canvas'); if (!im) { cv.remove(); return; }
+      const w = 720, h = Math.round(w * im.naturalHeight / im.naturalWidth); cv.width = w; cv.height = h; const x = cv.getContext('2d'); x.imageSmoothingQuality = 'high';
+      if (id.startsWith('mask')) { x.fillStyle = '#000'; x.fillRect(0, 0, w, h); x.globalAlpha = 0.9; }
+      x.drawImage(im, 0, 0, w, h); x.globalAlpha = 1; const k = w / im.naturalWidth;
+      (a?.frames || []).forEach((f, i) => { const r = f.rect; x.strokeStyle = '#F48AB4'; x.lineWidth = 1.5; x.strokeRect(r.x * k, r.y * k, r.w * k, r.h * k); x.fillStyle = '#F48AB4'; x.font = '700 12px system-ui'; x.fillText(`${i + 1} ${f.name}`, r.x * k + 3, r.y * k + 13); });
+    });
+  }
+}
+
+// ---- オープニング（初回のみ・4カット・スキップ可） ----
+const OP = { cut: 0, t0: 0, done: null };
+function startOpening(onDone) { OP.cut = 0; OP.t0 = performance.now(); OP.done = onDone; show('opening'); updateOpDots(); Promise.all([loadImg('bg_neon'), loadImg('sakura_poses'), loadImg('boss_poses'), loadImg('harisen'), loadImg('mask_sakura')]); }
+function updateOpDots() { document.querySelectorAll('#op-dots i').forEach((e, i) => e.classList.toggle('on', i === OP.cut)); $('#op-next').textContent = OP.cut >= 3 ? '屋上へ！' : 'つぎへ'; }
+function opNext() { Sound.init(); Sound.click(); if (OP.cut >= 3) endOpening(); else { OP.cut++; OP.t0 = performance.now(); updateOpDots(); } }
+function endOpening() { save.seenOpening = true; persist(); const f = OP.done; OP.done = null; f && f(); }
+function renderOpening(now) {
+  const cv = $('#op-canvas'); const dpr = Math.min(window.devicePixelRatio || 1, 2); const cw = cv.clientWidth, ch = cv.clientHeight; if (!cw || !ch) return;
+  if (cv.width !== Math.round(cw * dpr)) { cv.width = Math.round(cw * dpr); cv.height = Math.round(ch * dpr); }
+  const x = cv.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0); const tc = (now - OP.t0) / 1000;
+  if (tc > 4.2 && OP.cut < 3) { OP.cut++; OP.t0 = now; updateOpDots(); }
+  x.fillStyle = '#0b0a18'; x.fillRect(0, 0, cw, ch);
+  const pw = Math.min(cw - 24, ch * 1.1), ph = Math.min(ch - 24, pw * 1.45); const px = (cw - pw) / 2, py = (ch - ph) / 2;
+  x.save(); x.translate(px + pw / 2, py + ph / 2); x.rotate([-0.012, 0.01, -0.008, 0.012][OP.cut]); x.translate(-pw / 2, -ph / 2);
+  x.beginPath(); x.rect(0, 0, pw, ph); x.save(); x.clip();
+  const bg = IMG.bg_neon; const s = Math.min(ph * 0.62, pw * 0.95) / 510; const k = Math.min(1, tc / 0.35);
+  const bubble = (bx, by, text, size = 18, left) => { x.save(); x.globalAlpha = k; x.font = `800 ${size}px system-ui, -apple-system, "Hiragino Sans", sans-serif`; const w = x.measureText(text).width + 24, h = size + 18; const X = clamp(bx - w / 2, 8, pw - w - 8);
+    x.fillStyle = '#fff8fc'; x.strokeStyle = '#17162C'; x.lineWidth = 3; x.beginPath(); x.roundRect ? x.roundRect(X, by, w, h, 14) : x.rect(X, by, w, h); x.fill(); x.stroke();
+    x.beginPath(); const tx = left ? X + 18 : X + w - 26; x.moveTo(tx, by + h - 2); x.lineTo(tx + (left ? -12 : 10), by + h + 14); x.lineTo(tx + 12, by + h - 2); x.fill(); x.fillStyle = '#17162C'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(text, X + w / 2, by + h / 2 + 1); x.textBaseline = 'alphabetic'; x.restore(); };
+  if (OP.cut === 0) {
+    x.fillStyle = '#211d3d'; x.fillRect(0, 0, pw, ph);
+    if (bg) { x.save(); x.beginPath(); x.rect(pw * 0.08, ph * 0.06, pw * 0.84, ph * 0.36); x.clip(); x.drawImage(bg, 0, 200, 1536, 560, pw * 0.08, ph * 0.06, pw * 0.84, pw * 0.84 * 560 / 1536); x.restore(); }
+    x.strokeStyle = '#3a3366'; x.lineWidth = 6; x.strokeRect(pw * 0.08, ph * 0.06, pw * 0.84, ph * 0.36); x.fillStyle = '#3a3366'; x.fillRect(pw * 0.5 - 3, ph * 0.06, 6, ph * 0.36);
+    x.fillStyle = '#5b4a3f'; x.fillRect(0, ph * 0.74, pw, ph * 0.26); x.fillStyle = '#6e5a4c'; x.fillRect(0, ph * 0.74, pw, 8);
+    const n = Math.min(14, Math.floor(tc * 9)); for (let i = 0; i < n; i++) { x.fillStyle = i % 2 ? '#f4efe6' : '#e6dfd2'; x.fillRect(pw * 0.14 + (i % 3) * 2, ph * 0.74 - (i + 1) * 9, pw * 0.26, 8); }
+    { const b = Math.sin(tc * 5); drawBossSt(x, { wear: 1, A: BOSS.idle, B: BOSS.thumbs, k: smooth((tc - 0.15) / 0.25), center: false, rot: 0.03 * b, sx: 1, sy: 1 + 0.02 * b, flip: true }, pw * 0.7, ph * 0.8, s * 0.85, s * 0.85 * dpr); }
+    bubble(pw * 0.6, Math.max(8, ph * 0.8 - 393 * s * 0.85 - 58), 'これも今日中で！', 20);
+    if (tc > 1.4) bubble(pw * 0.32, ph * 0.84, '……またですか？', 16, true);
+  } else if (OP.cut === 1) {
+    const g = x.createLinearGradient(0, 0, 0, ph); g.addColorStop(0, '#120f26'); g.addColorStop(1, '#2a2350'); x.fillStyle = g; x.fillRect(0, 0, pw, ph);
+    const dw = pw * 0.36, dh = ph * 0.62, dx = pw * 0.5 - dw / 2, dy = ph * 0.2; const open = clamp(tc / 1.2, 0, 1);
+    x.fillStyle = '#8DCEEF'; x.globalAlpha = 0.25 + 0.5 * open; x.beginPath(); x.moveTo(dx, dy); x.lineTo(dx + dw, dy); x.lineTo(dx + dw + pw * 0.3 * open, ph); x.lineTo(dx - pw * 0.3 * open, ph); x.fill(); x.globalAlpha = 1;
+    if (bg) { x.save(); x.beginPath(); x.rect(dx, dy, dw, dh); x.clip(); x.drawImage(bg, 500, 300, 520, 700, dx, dy, dw, dh); x.restore(); } else { x.fillStyle = '#5ee0ff'; x.fillRect(dx, dy, dw, dh); }
+    x.fillStyle = '#4a4470'; x.save(); x.translate(dx, dy); x.transform(1 - open * 0.75, -0.25 * open, 0, 1, 0, 0); x.fillRect(0, 0, dw, dh); x.fillStyle = '#ffd27a'; x.fillRect(dw * 0.8, dh * 0.5, 8, 8); x.restore();
+    x.strokeStyle = '#17162C'; x.lineWidth = 5; x.strokeRect(dx, dy, dw, dh);
+    x.fillStyle = '#fff8fc'; x.font = '400 16px "Dela Gothic One", system-ui'; x.textAlign = 'center'; x.fillText('ガチャ', dx + dw + 30, dy + 30);
+    bubble(pw * 0.5, ph * 0.06, '部長、ちょっと屋上へ。', 18, true);
+  } else if (OP.cut === 2) {
+    x.fillStyle = '#2a1030'; x.fillRect(0, 0, pw, ph); x.save(); x.translate(pw / 2, ph * 0.55);
+    for (let i = 0; i < 28; i++) { x.rotate(Math.PI * 2 / 28); x.fillStyle = i % 2 ? '#F48AB4' : '#ffd1e3'; x.beginPath(); x.moveTo(0, 0); x.lineTo(pw, -26); x.lineTo(pw, 26); x.fill(); }
+    x.restore(); const pop = tc < 0.25 ? 0.6 + tc / 0.25 * 0.45 : 1.05 - Math.min(0.05, (tc - 0.25) * 0.2);
+    let st; const from = { A: SAK.windup, B: null, k: 0, fanAng: -54, sy: 0.97, sx: 1, lean: -0.02 };
+    if (tc < 0.95) { const u = smooth(tc / 0.3); st = { A: SAK.idle, B: SAK.windup, k: u, sy: 1 - 0.03 * u + 0.01 * Math.sin(tc * 8) * u, sx: 1, lean: -0.02 * u, rot: 0, bob: 0, fanAng: lerp(-18, -54, u), fA: SAK.idle, fB: SAK.windup, fk: u }; }
+    else if (tc < 1.8) { const d = (tc - 0.95) * 0.5 + 0.05; st = swingPose(d, from); if (st.smear) st.smear = [1, 2, 3, 4, 5].map(j => d - j * 0.01).filter(v => v > 0.045).map(v => swingPose(v, from).fanAng); }
+    else st = cheerPose(tc - 1.8);
+    finishSak(st, save.costumeLv, save.fanLv);
+    x.save(); x.translate(pw * 0.52, ph * 0.96 - (st.bob || 0) * 493 * s / 1.9); x.scale(pop, pop); drawSakuraSt(x, st, 0, 0, s, s * dpr); x.restore();
+    if (tc > 0.95 && tc < 1.4) { x.save(); x.globalAlpha = 1 - (tc - 0.95) / 0.45; x.fillStyle = '#fff8fc'; x.font = '400 34px "Dela Gothic One", system-ui'; x.textAlign = 'center'; x.lineWidth = 6; x.strokeStyle = '#2a1030'; x.strokeText('ブンッ！', pw * 0.8, ph * 0.5); x.fillText('ブンッ！', pw * 0.8, ph * 0.5); x.restore(); }
+    for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2 + tc; x.fillStyle = '#fff8fc'; const r = pw * 0.36; x.fillRect(pw / 2 + Math.cos(a) * r - 3, ph * 0.5 + Math.sin(a) * r * 0.8 - 3, 6, 6); }
+    x.fillStyle = '#fff8fc'; x.font = '400 30px "Dela Gothic One", system-ui'; x.textAlign = 'left'; x.lineWidth = 6; x.strokeStyle = '#2a1030'; x.strokeText('シャキーン！', 14, ph * 0.3); x.fillText('シャキーン！', 14, ph * 0.3);
+    if (tc > 0.6) bubble(pw * 0.5, ph * 0.04, '今日は、定時で帰ります！', 19);
+  } else {
+    if (bg) x.drawImage(bg, 200, 120, 1100, 900, 0, 0, pw, pw * 900 / 1100 < ph ? ph : pw * 900 / 1100); else { x.fillStyle = '#17162C'; x.fillRect(0, 0, pw, ph); }
+    x.fillStyle = '#0004'; x.fillRect(0, 0, pw, ph);
+    const q = (tc % 1.5) / 1.5, sk = 0.5 - 0.5 * Math.cos(2 * Math.PI * q);
+    drawBossSt(x, { wear: 1, A: BOSS.idle, B: BOSS.brace, k: smooth(sk * 1.2), center: false, rot: 0, sy: 1 - 0.05 * sk, sx: 1 + 0.03 * sk, flip: true }, pw * 0.55, ph * 0.94, s * 0.95, s * 0.95 * dpr);
+    x.fillStyle = '#fff8fc'; x.font = '700 13px system-ui'; x.textAlign = 'left'; x.fillText('（準備運動中）', 14, ph * 0.94);
+    bubble(pw * 0.55, ph * 0.3, 'どーんと来い！', 22);
+  }
+  x.restore(); x.strokeStyle = '#fff8fc'; x.lineWidth = 5; x.strokeRect(0, 0, pw, ph); x.restore();
+}
+
+// ---------------------------------------------------------------------
+//  メインループ
+// ---------------------------------------------------------------------
+let lastFrame = performance.now(), acc = 0; let STEP = 1 / 120;
+function tick(dt) {
+  if (G.screen === 'play' && !G.paused) { acc += dt; let n = 0; while (acc >= STEP && n < 30) { step(STEP); acc -= STEP; n++; } if (n >= 30) acc = 0; }
+}
+function frame(now) {
+  requestAnimationFrame(frame);
+  if (Clock.virtual != null) return;   // テスト用の仮想時計で駆動中
+  const dt = clamp((now - lastFrame) / 1000, 0, 0.1); lastFrame = now;
+  if (G.screen === 'play') { tick(dt); renderPlay(); if (G.resSak && !$('#ov-result').hidden) drawResultSakuraAnim(now); }
+  else if (G.screen === 'opening') renderOpening(now);
+  else if (G.screen === 'title') drawTitleCanvas(now);
+}
+
+// ---------------------------------------------------------------------
+//  起動
+// ---------------------------------------------------------------------
+function bindUI() {
+  document.addEventListener('pointerdown', () => Sound.init(), { capture: true, passive: true });
+  document.querySelectorAll('[data-back]').forEach(b => b.addEventListener('click', () => { Sound.click(); show(b.dataset.back); }));
+  $('#btn-start').addEventListener('click', () => { Sound.init(); Sound.click(); if (!save.seenOpening) startOpening(() => enterReady(1, false)); else show('courses'); });
+  $('#btn-go-courses').addEventListener('click', () => { Sound.click(); show('courses'); });
+  $('#btn-go-equip').addEventListener('click', () => { Sound.click(); G.equipReturn = 'title'; show('equip'); });
+  $('#btn-go-reward').addEventListener('click', () => { Sound.click(); show('reward'); });
+  $('#btn-go-settings').addEventListener('click', () => { Sound.click(); show('settings'); });
+  $('#btn-go-dev').addEventListener('click', () => show('dev'));
+  $('#eq-back').addEventListener('click', () => { Sound.click(); const r = G.equipReturn; if (r === 'sheet' && sheetCourse) { show('courses'); openSheet(sheetCourse.id); } else show(r === 'courses' ? 'courses' : 'title'); });
+  $('#op-next').addEventListener('click', opNext); $('#op-canvas').addEventListener('click', opNext); $('#op-skip').addEventListener('click', () => { Sound.click(); endOpening(); });
+  $('#sh-close').addEventListener('click', closeSheet); $('#ov-sheet').addEventListener('click', e => { if (e.target.id === 'ov-sheet') closeSheet(); });
+  $('#sh-equip-btn').addEventListener('click', () => { closeSheet(); G.equipReturn = 'sheet'; show('equip'); });
+  $('#sh-go').addEventListener('click', () => { const id = sheetCourse.id, pr = $('#sh-practice').checked; closeSheet(); enterReady(id, pr); });
+  const act = $('#btn-action');
+  act.addEventListener('pointerdown', e => { e.preventDefault(); if (e.button > 0) return; onAction(e.timeStamp); });
+  act.addEventListener('contextmenu', e => e.preventDefault());
+  document.addEventListener('keydown', e => {
+    if (G.screen !== 'play' || e.repeat) return; if (e.code !== 'Space' && e.code !== 'Enter' && e.key !== ' ' && e.key !== 'Enter') return;
+    if (!$('#ov-result').hidden || !$('#ov-pause').hidden) return; e.preventDefault(); onAction(e.timeStamp);
+  });
+  $('#btn-pause').addEventListener('click', () => { if (activePlay()) pauseGame(); else if (G.state === 'ready') show('courses'); });
+  $('#ps-resume').addEventListener('click', resumeGame);
+  $('#ps-quit').addEventListener('click', () => { G.paused = false; Clock.resume(); $('#ov-pause').hidden = true; show('courses'); });
+  $('#ps-sound').addEventListener('change', e => setSetting('mute', !e.target.checked)); $('#ps-motion').addEventListener('change', e => setSetting('reduceMotion', e.target.checked));
+  $('#set-sound').addEventListener('change', e => setSetting('mute', !e.target.checked)); $('#set-motion').addEventListener('change', e => setSetting('reduceMotion', e.target.checked));
+  $('#btn-replay-op').addEventListener('click', () => startOpening(() => show('title')));
+  $('#btn-reset').addEventListener('click', resetSave);
+  $('#btn-retry').addEventListener('click', () => { Sound.click(); enterReady(G.course.id, G.practice); });
+  $('#btn-next').addEventListener('click', () => { const n = courseById(G.course.id + 1); if (n && isUnlocked(n)) { show('courses'); openSheet(n.id); } });
+  $('#btn-res-equip').addEventListener('click', () => { sheetCourse = G.course; G.equipReturn = 'sheet'; show('equip'); });
+  $('#btn-res-courses').addEventListener('click', () => show('courses'));
+  $('#btn-save-img').addEventListener('click', saveResultImage); $('#btn-share-img').addEventListener('click', shareResultImage);
+  $('#dev-coins').addEventListener('click', () => { save.coins += 1000; persist(); toast('コイン +1000'); });
+  $('#dev-xp').addEventListener('click', () => { save.totalXp += 250; persist(); toast(`XP +250（PLAYER Lv.${playerLevel()}）`); });
+  $('#dev-clear-all').addEventListener('click', () => { save.cleared = CFG.courses.map(c => c.id); persist(); toast('全コースをクリア済みにしました（テスト用）'); });
+  $('#dev-reset').addEventListener('click', resetSave);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) pauseGame(); });
+  window.addEventListener('blur', () => { /* フォーカス喪失だけでは止めない（タブ切替はvisibilitychangeで停止） */ });
+  window.addEventListener('resize', () => { layoutPlay(); });
+  if (window.ResizeObserver) new ResizeObserver(() => layoutPlay()).observe($('#scr-play'));
+}
+async function boot() {
+  try {
+    [CFG, MAN] = await Promise.all([fetch('config/game_balance.json', { cache: 'no-cache' }).then(r => { if (!r.ok) throw new Error('game_balance.json: HTTP ' + r.status); return r.json(); }),
+      fetch('config/asset_manifest.json', { cache: 'no-cache' }).then(r => { if (!r.ok) throw new Error('asset_manifest.json: HTTP ' + r.status); return r.json(); })]);
+  } catch (e) { $('#boot').innerHTML = `<div><p style="color:var(--stamp);font-weight:800">設定ファイルを読み込めませんでした</p><p class="small">${String(e.message || e)}</p></div>`; return; }
+  MAN.assets.forEach(a => { A[a.id] = a; }); STEP = CFG.physics.fixedStepSeconds || 1 / 120; ROOF = CFG.physics.launchHeightMeters;
+  // セーブ読み込み（壊れていたら確認してから初期化）
+  const raw = Store.read(); let corrupt = false;
+  if (raw) { try { const s = JSON.parse(raw); if (validSave(s)) save = normalizeSave(s); else corrupt = true; } catch (e) { corrupt = true; } }
+  if (!save) save = newSave();
+  bindUI();
+  await Promise.all([loadImg('sakura_poses'), loadImg('boss_poses'), loadImg('harisen'), loadImg('mask_sakura'), loadImg('mask_boss')]);
+  try { document.fonts && document.fonts.load('400 20px "Dela Gothic One"', 'PERFECTぶひー定時'); } catch (e) { /* noop */ }
+  $('#boot').remove(); show('title');
+  loadImg('boss_wear'); loadImg('bunny_costumes');
+  if (corrupt) {
+    const ok = await confirmModal('セーブデータを読み込めませんでした', 'データが壊れているか、古い形式です。初期化して最初から始めますか？「保存しないで遊ぶ」を選ぶと、元のデータは残したまま今回だけ遊べます。', '初期化して始める', '保存しないで遊ぶ');
+    if (ok) { Store.clear(); save = newSave(); persist(); } else { saveEnabled = false; toast('今回の進行は保存されません'); }
+    renderTitle();
+  }
+  Cloud.init();
+  requestAnimationFrame(frame);
+}
+
+// テスト用フック（自動テストから使用）
+window.__harisen = {
+  get G() { return G; }, get save() { return save; }, get CFG() { return CFG; }, Clock, judgeTap, computeLaunch, enterReady, onAction, tick, renderPlay, show, layoutPlay, posAt, stressRelief,
+  /** 仮想時計で1プレイを再現：fpsごとにtickし、指定時刻でタップ */
+  async simulate({ courseId = 1, tapOffset, fps = 60, practice = false }) {
+    await enterReady(courseId, practice); Clock.virtual = 1000; Clock.pausedTotal = 0; Clock.pausedAt = null; acc = 0;
+    const dt = 1 / fps; onAction(Clock.virtual); const r = G.run; const tapAt = tapOffset == null ? null : 1000 + tapOffset * 1000; let tapped = false;
+    for (let i = 0; i < fps * 40; i++) {
+      const prev = Clock.virtual; Clock.virtual += dt * 1000;
+      if (tapAt != null && !tapped && Clock.virtual >= tapAt) { tapped = true; onAction(tapAt); void prev; }
+      tick(dt); if (r.done) break;
+    }
+    const out = { judge: r.judge?.label || 'MISS', miss: r.miss, dist: r.L ? r.L.dist : 0, reward: r.reward, contactT: r.contactT, startT: r.startT, e: r.judge?.e };
+    Clock.virtual = null; Clock.pausedTotal = 0; lastFrame = performance.now(); return out;
+  },
+};
+window.__harisen.capture = async function ({ courseId = 1, tapOffset, fps = 60, times = [], practice = false }) {
+  await enterReady(courseId, practice); Clock.virtual = 1000; Clock.pausedTotal = 0; Clock.pausedAt = null; acc = 0;
+  const dt = 1 / fps; onAction(Clock.virtual); const r = G.run; const tapAt = tapOffset == null ? null : 1000 + tapOffset * 1000; let tapped = false; const shots = []; let ti = 0;
+  for (let i = 0; i < fps * 40 && ti < times.length; i++) {
+    Clock.virtual += dt * 1000; if (tapAt != null && !tapped && Clock.virtual >= tapAt) { tapped = true; onAction(tapAt); }
+    tick(dt); const tn = (Clock.virtual - 1000) / 1000;
+    while (ti < times.length && tn >= times[ti]) { renderPlay(); shots.push(canvas().toDataURL('image/png')); ti++; }
+  }
+  Clock.virtual = null; Clock.pausedTotal = 0; lastFrame = performance.now(); return { shots, dist: r.L ? r.L.dist : 0, judge: r.judge?.label };
+};
+boot();
+})();
+</script>
+</body></html>

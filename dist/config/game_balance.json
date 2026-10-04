@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "title": "サクラの定時退社！ぶっとびハリセン",
+  "playerLevelCap": 5,
+  "equipmentLevelCap": 10,
+  "worldCount": 5,
+  "courseCount": 10,
+  "playerXpThresholds": [0, 140, 380, 740, 1200],
+  "equipmentCapByPlayerLevel": [2, 4, 6, 8, 10],
+  "equipmentPalette": ["#E8E3EC", "#F48AB4", "#B996EF", "#8BD5B0", "#8DCEEF", "#49C7C1", "#EACB59", "#F28D52", "#8462CE", "#FFF0CA"],
+  "equipmentNames": ["ビギナー", "サクラ", "ライラック", "ミント", "スカイ", "マリン", "スター", "フレア", "ナイト", "グランドサクラ"],
+  "run": {"baseDurationSeconds": 1.8, "durationDecreasePerCostumeLevel": 0.045, "swingContactDelaySeconds": 0.10, "inputEvent": "pointerdown", "keyboard": ["Space", "Enter"]},
+  "timing": [
+    {"label": "PERFECT", "maxAbsErrorSeconds": 0.040, "powerMultiplier": 1.08},
+    {"label": "GREAT", "maxAbsErrorSeconds": 0.085, "powerMultiplier": 0.96},
+    {"label": "GOOD", "maxAbsErrorSeconds": 0.140, "powerMultiplier": 0.82},
+    {"label": "GRAZE", "maxAbsErrorSeconds": 0.210, "powerMultiplier": 0.58}
+  ],
+  "physics": {"launchHeightMeters": 18, "launchAngleDegrees": 38, "baseSpeedMetersPerSecond": 42, "fanSpeedPerLevel": 3, "costumeSpeedPerLevel": 1.8, "playerSpeedPerLevel": 2, "fixedStepSeconds": 0.008333333333333333, "maxSimulationSeconds": 30, "scoreAtFirstGroundContact": true},
+  "economy": {"upgradeBaseCost": 30, "upgradeCostPerExistingLevel": 10, "hitBaseCoins": 30, "coinsPerMeter": 0.1, "missCoins": 10, "firstClearCoins": 80, "hitBaseXp": 20, "metersPerBonusXp": 50, "missXp": 8, "firstClearXp": 60},
+  "stress": {"initial": 100, "reliefFormula": "min(100, floor(100 * distanceMeters / (1.3 * courseTargetMeters)))", "minimum": 0},
+  "courses": [
+    {"id": 1, "world": 1, "biome": "neon", "name": "ネオンビル・残業フロア", "requiredPlayerLevel": 1, "targetMeters": 130, "suggestedFan": 1, "suggestedCostume": 1, "gravity": 9.8, "windAcceleration": 0, "bossWear": 1},
+    {"id": 2, "world": 1, "biome": "neon", "name": "ネオンビル・終電チャレンジ", "requiredPlayerLevel": 1, "targetMeters": 180, "suggestedFan": 2, "suggestedCostume": 2, "gravity": 9.8, "windAcceleration": 0, "bossWear": 2},
+    {"id": 3, "world": 2, "biome": "coast", "name": "海岸・潮風オフィス", "requiredPlayerLevel": 2, "targetMeters": 240, "suggestedFan": 3, "suggestedCostume": 3, "gravity": 9.8, "windAcceleration": 0.5, "bossWear": 3},
+    {"id": 4, "world": 2, "biome": "coast", "name": "海岸・サンセット退勤", "requiredPlayerLevel": 2, "targetMeters": 280, "suggestedFan": 4, "suggestedCostume": 4, "gravity": 9.8, "windAcceleration": 0.5, "bossWear": 4},
+    {"id": 5, "world": 3, "biome": "jungle", "name": "ジャングル・会議の密林", "requiredPlayerLevel": 3, "targetMeters": 340, "suggestedFan": 5, "suggestedCostume": 5, "gravity": 10.2, "windAcceleration": 0, "bossWear": 5},
+    {"id": 6, "world": 3, "biome": "jungle", "name": "ジャングル・決裁の滝", "requiredPlayerLevel": 3, "targetMeters": 390, "suggestedFan": 6, "suggestedCostume": 6, "gravity": 10.2, "windAcceleration": 0, "bossWear": 6},
+    {"id": 7, "world": 4, "biome": "ice", "name": "氷山・凍結プロジェクト", "requiredPlayerLevel": 4, "targetMeters": 470, "suggestedFan": 7, "suggestedCostume": 7, "gravity": 9.8, "windAcceleration": -0.3, "bossWear": 7},
+    {"id": 8, "world": 4, "biome": "ice", "name": "氷山・極寒の承認待ち", "requiredPlayerLevel": 4, "targetMeters": 540, "suggestedFan": 8, "suggestedCostume": 8, "gravity": 9.8, "windAcceleration": -0.3, "bossWear": 8},
+    {"id": 9, "world": 5, "biome": "magma", "name": "マグマ山地・炎上案件", "requiredPlayerLevel": 5, "targetMeters": 620, "suggestedFan": 9, "suggestedCostume": 9, "gravity": 9.0, "windAcceleration": 0.2, "bossWear": 9},
+    {"id": 10, "world": 5, "biome": "magma", "name": "マグマ山地・最終退勤", "requiredPlayerLevel": 5, "targetMeters": 700, "suggestedFan": 10, "suggestedCostume": 10, "gravity": 9.0, "windAcceleration": 0.2, "bossWear": 10}
+  ],
+  "reward": {"id": "sakura_clear_bromide", "requiresClearedCourses": [1,2,3,4,5,6,7,8,9,10], "accessMode": "server_verified_download", "signedUrlTtlSeconds": 60, "assetSource": "assets/rewards/sakura_bromide.png"},
+  "save": {"schemaVersion": 1, "key": "sakura-harisen-v1"}
+}
